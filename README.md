@@ -81,8 +81,6 @@ Summarize the content into key bullet points:
 
 # Input
 
-```
-
 Title: {{Title}}
 
 URL: {{URL}}
@@ -90,5 +88,3 @@ URL: {{URL}}
 Transcript:
 
 {{Transcript}}
-
-```
