@@ -1,4 +1,4 @@
-# YouTube Summary Personal Edition
+# Video Summary
 
 A lightweight Chrome Extension for summarizing YouTube videos with AI (Grok, Gemini). No build tools required - pure Vanilla JavaScript!
 
