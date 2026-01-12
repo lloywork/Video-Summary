@@ -1,6 +1,6 @@
 # Video Summary
 
-A lightweight Chrome Extension for summarizing YouTube videos with AI (Grok, Gemini). No build tools required - pure Vanilla JavaScript!
+A lightweight Chrome Extension for summarizing YouTube, Datacamp, Udemy, Coursera videos with AI (Grok, Gemini, ChatGPT). No build tools required - pure Vanilla JavaScript!
 
 ## 🚀 Quick Start
 
