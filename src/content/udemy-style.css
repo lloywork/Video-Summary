@@ -1,0 +1,122 @@
+/* Udemy Summary - Player Button Styles */
+/* Matches Udemy's native control bar button styling */
+
+/* Main player button */
+#udemy_ai_summary_btn {
+  opacity: 0.9;
+  transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#udemy_ai_summary_btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  color: #a31ed3; /* Udemy purple accent */
+}
+
+#udemy_ai_summary_btn:focus {
+  outline: 2px solid #a31ed3;
+  outline-offset: 2px;
+}
+
+#udemy_ai_summary_btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+#udemy_ai_summary_btn svg {
+  pointer-events: none;
+  transition: transform 0.2s ease;
+}
+
+/* Loading spin animation */
+#udemy_ai_summary_btn.loading svg,
+#udemy_ai_summary_btn:disabled svg {
+  animation: udemy-summary-spin 1s linear infinite;
+}
+
+@keyframes udemy-summary-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Player notification toast */
+#udemy-summary-player-notification {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Roboto",
+    "Segoe UI", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 999999;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  animation: udemy-summary-fadeInUp 0.3s ease;
+}
+
+@keyframes udemy-summary-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes udemy-summary-fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+}
+
+/* Tooltip styling for the button */
+#udemy_ai_summary_btn[title]::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  padding: 6px 12px;
+  background: #1c1d1f;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+#udemy_ai_summary_btn:hover[title]::after {
+  opacity: 1;
+}
+
+/* Sparkle animation on hover */
+#udemy_ai_summary_btn:hover svg {
+  filter: drop-shadow(0 0 4px rgba(163, 30, 211, 0.6));
+}
+
+/* Match Udemy's button container spacing */
+.popper-module--popper--mM5Ie:has(#udemy_ai_summary_btn) {
+  margin-left: 4px;
+  margin-right: 4px;
+}

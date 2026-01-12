@@ -1,0 +1,112 @@
+/* Coursera Summary - Player Button Styles */
+/* Matches Coursera's native control bar button styling */
+
+/* Main player button */
+#coursera_ai_summary_btn {
+  opacity: 0.9;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+#coursera_ai_summary_btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+#coursera_ai_summary_btn:focus {
+  outline: 2px solid #0056D2; /* Coursera blue */
+  outline-offset: 2px;
+}
+
+#coursera_ai_summary_btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+#coursera_ai_summary_btn svg {
+  pointer-events: none;
+  transition: transform 0.2s ease;
+}
+
+/* Loading spin animation */
+#coursera_ai_summary_btn.loading svg,
+#coursera_ai_summary_btn:disabled svg {
+  animation: coursera-summary-spin 1s linear infinite;
+}
+
+@keyframes coursera-summary-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Player notification toast */
+#coursera-summary-player-notification {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-family: 'Source Sans Pro', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 999999;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  animation: coursera-summary-fadeInUp 0.3s ease;
+}
+
+@keyframes coursera-summary-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes coursera-summary-fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+}
+
+/* Button wrapper styling */
+.coursera-ai-summary-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hover glow effect */
+#coursera_ai_summary_btn:hover svg {
+  filter: drop-shadow(0 0 4px rgba(0, 86, 210, 0.6));
+}
+
+/* Ensure button matches Coursera's control bar height */
+#coursera_ai_summary_btn {
+  height: 28px;
+  width: 28px;
+  min-width: 28px;
+  min-height: 28px;
+}

@@ -1,0 +1,74 @@
+/* YouTube Summary - Player Button Styles */
+
+/* Main player button - inherits from ytp-button */
+#yt_ai_summary_btn {
+  opacity: 0.9;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#yt_ai_summary_btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+#yt_ai_summary_btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+#yt_ai_summary_btn svg {
+  pointer-events: none;
+}
+
+/* Loading spin animation */
+#yt_ai_summary_btn.loading {
+  animation: yt-summary-spin 1s linear infinite;
+}
+
+@keyframes yt-summary-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Player notification toast */
+#yt-summary-player-notification {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-family: "YouTube Sans", "Roboto", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  animation: yt-summary-fadeInUp 0.3s ease;
+}
+
+@keyframes yt-summary-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes yt-summary-fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+}
