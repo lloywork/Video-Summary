@@ -1,92 +1,94 @@
 # Video Summary
+A powerful Chrome Extension that generates comprehensive summaries for videos on **YouTube, Udemy, Coursera, and DataCamp** using your favorite AI models (ChatGPT, Gemini, or Grok).
 
-A lightweight Chrome Extension for summarizing YouTube, Datacamp, Udemy, Coursera videos with AI (Grok, Gemini, ChatGPT). No build tools required - pure Vanilla JavaScript!
+Extension supports multiple learning platforms, per-site AI configuration, auto-fill capabilities, and enhanced transcript extraction.
 
-## 🚀 Quick Start
+## ✨ Key Features
+* **Multi-Platform Support**: Works seamlessly on:
+    * 📺 **YouTube**
+    * 🎓 **Udemy**
+    * 📘 **Coursera**
+    * 📊 **DataCamp** (Supports both Classic & AI Coach UI)
 
-### Installation
+* **Multiple AI Models**: Choose between **ChatGPT**, **Google Gemini**, or **xAI Grok**.
 
-1. Open Chrome and go to `chrome://extensions/`
-2. Enable **Developer Mode** (top-right toggle)
-3. Click **"Load unpacked"**
-4. Select this folder
-5. Done! 🎉
+* **Smart Auto-Fill**: Automatically opens your chosen AI, pastes the prompt, and prepares it for submission.
 
-### First Use
+* **Flexible Configuration**:
+    * **Global Mode**: Use one AI model for everything.
+    * **Per-Service Mode**: Assign different AIs for different sites (e.g., Gemini for YouTube, ChatGPT for Udemy).
 
-1. Right-click the extension icon → **Options**
-2. Choose your AI model (Grok or Gemini)
-3. If using Gemini, set your account URL
-4. Customize your prompt template (optional)
-5. Save settings
+* **Custom Prompts**: Fully customizable prompt templates with variables.
 
-## ✨ Features
+* **Privacy Focused**: Runs 100% locally in your browser. No external servers.
 
-- **AI Models**: Support for Grok and Gemini
-- **Smart Routing**: Auto-opens selected AI service with copied prompt
-- **Flexible Formats**: Copy as Markdown or Plain Text
-- **Dark Mode**: Auto, Light, or Dark theme
-- **Custom Prompts**: Full control over prompt templates
-- **No Dependencies**: Pure JavaScript, no build step needed
+## 🚀 Installation
+Since this is a personal developer extension, you need to load it manually:
 
-## 📝 Usage
+1.  Download or clone this repository to your computer.
+2.  Open Chrome and navigate to `chrome://extensions/`.
+3.  Toggle **Developer mode** on (top right corner).
+4.  Click **Load unpacked**.
+5.  Select the folder containing this extension.
 
-1. Open any YouTube video with captions
-2. Click the **"Transcript & Summary"** button in the sidebar
-3. Wait for the prompt to be copied
-4. Your AI service opens automatically
-5. Paste (Ctrl+V) and get your summary!
+## ⚙️ Configuration
+Right-click the extension icon and select **Options** to configure:
 
-## 🎯 Template Variables
+* **AI Models**: Switch between Global or Custom (Per-Service) modes.
 
-Use these in your custom prompt:
+* **Gemini URL**: If using Gemini, you can specify your account index (e.g., `/u/1/app`).
 
-- `{{Title}}` - Video title
-- `{{URL}}` - Video URL
-- `{{Transcript}}` - Full transcript
+* **Theme**: Light, Dark, or Auto (System).
 
-## 🛠️ Tech Stack
+* **Copy Format**: Choose between Markdown (bold timestamps) or Plain Text.
 
-- Manifest V3
-- Vanilla JavaScript (ES6+)
-- Chrome Storage API
-- Native DOMParser (no jQuery)
+* **Show Button**: Toggle the visibility of the summary button inside video players.
 
-## 📂 Project Structure
+### Custom Prompt Template
+You can customize how the extension talks to the AI using these variables:
+* `{{Title}}` - The video title.
+* `{{URL}}` - The video link.
+* `{{Transcript}}` - The extracted video transcript.
+
+**Recommend Prompt:**
+```text
+
+# Task Instructions: Please follow these steps to process the provided content:
+
+## Step 1: Role Selection
+
+Based on the title and transcript, select the most appropriate expert role (e.g., Economist, Tech Specialist, Financial Editor, etc.) to conduct this summary. Begin your response by stating: "As a [Role Name], I will summarize this content..."
+
+## Step 2: Web Search for Additional Context
+
+- Perform an online search to find in-depth information, highlights, or community discussions related to this topic from reputable knowledge-sharing platforms.
+
+- Only incorporate search findings if they directly clarify or add practical value to the core content.
+
+- Constraint: Do not use exact match search keywords (do not wrap keywords in quotation marks).
+
+## Step 3: Summarization
+
+Summarize the content into key bullet points:
+
+- Determine the number of bullet points based on the depth and length of the provided content.
+
+- Mandatory: Every bullet point must include its corresponding timestamp from the transcript (Format: [MM:SS]).
+
+- If information from the web search is used, provide the specific source URL immediately following that point.
+
+
+
+# Input
 
 ```
-├── manifest.json          # Extension config
-├── icons/                # Extension icons
-├── src/
-│   ├── options/         # Settings page
-│   │   ├── options.html
-│   │   ├── options.css
-│   │   └── options.js
-│   ├── content/         # YouTube integration
-│   │   ├── youtube.js
-│   │   ├── transcript.js
-│   │   ├── prompt.js
-│   │   └── style.css
-│   └── utils/           # Helpers
-│       ├── storage.js
-│       └── clipboard.js
+
+Title: {{Title}}
+
+URL: {{URL}}
+
+Transcript:
+
+{{Transcript}}
+
 ```
-
-## 🔒 Privacy
-
-- **100% Local**: All processing happens in your browser
-- **No Tracking**: Zero analytics or telemetry
-- **No Servers**: No backend, no data collection
-- **Open Source**: Review the code yourself
-
-## 📄 License
-
-Personal use only. Based on YouTube Summary v1.0.4.
-
-## 🤝 Contributing
-
-This is a personal edition. Feel free to fork and customize for your own use!
-
----
-
-Made with ❤️ for personal productivity
