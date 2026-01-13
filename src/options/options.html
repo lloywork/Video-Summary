@@ -24,7 +24,7 @@
           </svg>
         </div>
         <div class="header-text">
-          <h1>YouTube Summary Settings</h1>
+          <h1>Video Summary Settings</h1>
           <p>Personal Edition - Configure your AI summary preferences</p>
           <p class="header-note">
             📋 <strong>Note:</strong> This tool copies the prompt to your
@@ -66,12 +66,7 @@
             <label>AI Configuration Mode</label>
             <div class="radio-group">
               <label class="radio-label">
-                <input
-                  type="radio"
-                  name="aiMode"
-                  value="global"
-                  checked
-                />
+                <input type="radio" name="aiMode" value="global" checked />
                 <span class="radio-text">
                   <strong>Global</strong>
                   <small>Use one AI model for all platforms</small>
@@ -99,6 +94,7 @@
                 <option value="chatgpt">ChatGPT</option>
                 <option value="gemini">Gemini</option>
                 <option value="grok">Grok</option>
+                <option value="claude">Claude</option>
               </select>
               <small class="form-hint"
                 >Choose which AI service to open after copying the
@@ -119,19 +115,17 @@
                 <option value="chatgpt">ChatGPT</option>
                 <option value="gemini">Gemini</option>
                 <option value="grok">Grok</option>
+                <option value="claude">Claude</option>
               </select>
             </div>
 
             <div class="form-group">
               <label for="udemyModel">Udemy</label>
-              <select
-                id="udemyModel"
-                name="udemyModel"
-                class="form-control"
-              >
+              <select id="udemyModel" name="udemyModel" class="form-control">
                 <option value="chatgpt">ChatGPT</option>
                 <option value="gemini">Gemini</option>
                 <option value="grok">Grok</option>
+                <option value="claude">Claude</option>
               </select>
             </div>
 
@@ -145,6 +139,7 @@
                 <option value="chatgpt">ChatGPT</option>
                 <option value="gemini">Gemini</option>
                 <option value="grok">Grok</option>
+                <option value="claude">Claude</option>
               </select>
             </div>
 
@@ -158,6 +153,7 @@
                 <option value="chatgpt">ChatGPT</option>
                 <option value="gemini">Gemini</option>
                 <option value="grok">Grok</option>
+                <option value="claude">Claude</option>
               </select>
             </div>
 
@@ -258,6 +254,24 @@
                 <small
                   >Display the "Transcript & Summary" button on YouTube
                   videos</small
+                >
+              </span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                id="autoFillEnabled"
+                name="autoFillEnabled"
+                checked
+              />
+              <span class="checkbox-text">
+                <strong>Auto-fill & Auto-submit</strong>
+                <small
+                  >Automatically paste prompt into AI chat and click send
+                  button</small
                 >
               </span>
             </label>

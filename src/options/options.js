@@ -20,6 +20,7 @@ const DEFAULT_SETTINGS = {
   theme: 'auto',
   copyFormat: 'markdown',
   showButton: true,
+  autoFillEnabled: true,  // Auto-fill & Auto-submit toggle
   customPrompt: `Please summarize the following YouTube video:
 
 Title: {{Title}}
@@ -119,6 +120,7 @@ async function loadSettings() {
     }
 
     document.getElementById('showButton').checked = settings.showButton;
+    document.getElementById('autoFillEnabled').checked = settings.autoFillEnabled;
     document.getElementById('customPrompt').value = settings.customPrompt;
 
     console.log('Settings loaded:', settings);
@@ -227,6 +229,7 @@ async function handleSave(e) {
       theme: formData.get('theme'),
       copyFormat: formData.get('copyFormat'),
       showButton: formData.get('showButton') === 'on',
+      autoFillEnabled: formData.get('autoFillEnabled') === 'on',
       customPrompt: formData.get('customPrompt')
     };
 

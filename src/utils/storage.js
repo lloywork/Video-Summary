@@ -19,6 +19,7 @@ const DEFAULT_SETTINGS = {
   theme: 'auto',
   copyFormat: 'markdown',
   showButton: true,
+  autoFillEnabled: true,  // Auto-fill & Auto-submit toggle
   customPrompt: `Please summarize the following video:
 
 Title: {{Title}}

@@ -7,11 +7,20 @@
   console.log('[YouTube Summary] Auto-fill script loaded on:', window.location.hostname);
 
   // Check for pending prompt
-  const result = await chrome.storage.local.get('pendingPrompt');
+  const result = await chrome.storage.local.get(['pendingPrompt', 'autoFillEnabled']);
   const pendingPrompt = result.pendingPrompt;
+  const autoFillEnabled = result.autoFillEnabled !== false; // Default to true if not set
 
   if (!pendingPrompt) {
     console.log('[YouTube Summary] No pending prompt found');
+    return;
+  }
+
+  // Check if auto-fill is disabled
+  if (!autoFillEnabled) {
+    console.log('[YouTube Summary] Auto-fill is disabled in settings. Prompt is in clipboard, paste manually.');
+    // Clear the pending prompt since user will paste manually
+    await chrome.storage.local.remove('pendingPrompt');
     return;
   }
 
@@ -21,6 +30,7 @@
   const isGemini = window.location.hostname.includes('gemini.google.com');
   const isGrok = window.location.hostname.includes('grok.com');
   const isChatGPT = window.location.hostname.includes('chatgpt.com');
+  const isClaude = window.location.hostname.includes('claude.ai');
 
   if (isGemini) {
     await autoFillGemini(pendingPrompt);
@@ -28,6 +38,8 @@
     await autoFillGrok(pendingPrompt);
   } else if (isChatGPT) {
     await autoFillChatGPT(pendingPrompt);
+  } else if (isClaude) {
+    await autoFillClaude(pendingPrompt);
   }
 
 })();
@@ -518,6 +530,134 @@ async function autoSubmitChatGPT() {
   }
   
   console.log('[YouTube Summary] Could not find ChatGPT send button');
+  return false;
+}
+
+/**
+ * Auto-fill prompt into Claude
+ * Claude uses a ProseMirror-like contenteditable div
+ */
+async function autoFillClaude(prompt) {
+  console.log('[YouTube Summary] Attempting Claude auto-fill...');
+
+  // Claude selectors - contenteditable div with specific attributes
+  const selectors = [
+    'div[contenteditable="true"].ProseMirror',           // ProseMirror editor
+    'div[contenteditable="true"][data-placeholder]',     // With placeholder
+    'div.ProseMirror[contenteditable="true"]',           // Alternative order
+    'fieldset div[contenteditable="true"]',              // Inside fieldset
+    'div[role="textbox"]',                               // Role-based
+    'div[contenteditable="true"]',                       // Generic fallback
+  ];
+
+  const inputElement = await waitForElement(selectors, 10000);
+
+  if (!inputElement) {
+    console.error('[YouTube Summary] Claude input element not found');
+    showNotification('Could not auto-fill. Please paste (Ctrl+V) manually.', 'warning');
+    return;
+  }
+
+  try {
+    // Focus the element
+    inputElement.focus();
+    await sleep(100);
+
+    // Claude uses ProseMirror - similar to ChatGPT
+    if (inputElement.classList.contains('ProseMirror') || inputElement.getAttribute('contenteditable') === 'true') {
+      // Clear existing content
+      inputElement.innerHTML = '';
+      
+      // Create a paragraph for ProseMirror
+      const p = document.createElement('p');
+      p.textContent = prompt;
+      inputElement.appendChild(p);
+      
+      // Trigger input event to notify React/Vue
+      inputElement.dispatchEvent(new InputEvent('input', {
+        bubbles: true,
+        cancelable: true,
+        inputType: 'insertText',
+        data: prompt
+      }));
+      
+      console.log('[YouTube Summary] Claude auto-fill successful!');
+    }
+
+    // Clear the pending prompt
+    await chrome.storage.local.remove('pendingPrompt');
+    
+    // Auto-submit the prompt
+    await sleep(500);
+    const submitted = await autoSubmitClaude();
+    
+    if (submitted) {
+      showNotification('✅ Prompt sent! AI is generating response...', 'success');
+    } else {
+      showNotification('✅ Prompt filled! Click send or press Enter.', 'success');
+    }
+
+  } catch (error) {
+    console.error('[YouTube Summary] Claude auto-fill error:', error);
+    showNotification('Auto-fill failed. Please paste (Ctrl+V) manually.', 'warning');
+  }
+}
+
+/**
+ * Auto-submit prompt in Claude by clicking the send button
+ * @returns {Promise<boolean>} True if submit was successful
+ */
+async function autoSubmitClaude() {
+  console.log('[YouTube Summary] Attempting Claude auto-submit...');
+  
+  // Wait for UI to be ready
+  await sleep(500);
+  
+  // Method 1: Find by aria-label containing "Send"
+  const submitByAriaLabel = document.querySelector('button[aria-label*="Send"]');
+  if (submitByAriaLabel && !submitByAriaLabel.disabled) {
+    console.log('[YouTube Summary] Found Claude submit button by aria-label');
+    submitByAriaLabel.click();
+    return true;
+  }
+  
+  // Method 2: Find button with specific data attributes
+  const submitByDataAttr = document.querySelector('button[data-testid="send-button"]');
+  if (submitByDataAttr && !submitByDataAttr.disabled) {
+    console.log('[YouTube Summary] Found Claude submit button by data-testid');
+    submitByDataAttr.click();
+    return true;
+  }
+  
+  // Method 3: Find button inside fieldset with SVG (Claude's send button pattern)
+  const fieldsetButtons = document.querySelectorAll('fieldset button');
+  for (const btn of fieldsetButtons) {
+    if (btn.querySelector('svg') && !btn.disabled) {
+      const ariaLabel = (btn.getAttribute('aria-label') || '').toLowerCase();
+      // Check for send-related aria-label or position (usually last button)
+      if (ariaLabel.includes('send') || ariaLabel.includes('gửi') || ariaLabel === '') {
+        console.log('[YouTube Summary] Found Claude submit button in fieldset');
+        btn.click();
+        return true;
+      }
+    }
+  }
+  
+  // Method 4: Find any button with SVG that looks like a send button
+  const allButtons = document.querySelectorAll('button');
+  for (const btn of allButtons) {
+    const svg = btn.querySelector('svg');
+    if (svg && !btn.disabled) {
+      const ariaLabel = (btn.getAttribute('aria-label') || '').toLowerCase();
+      if (ariaLabel.includes('send') || ariaLabel.includes('gửi')) {
+        console.log('[YouTube Summary] Found send button by aria-label:', ariaLabel);
+        btn.click();
+        return true;
+      }
+    }
+  }
+  
+  console.log('[YouTube Summary] Could not find Claude send button');
   return false;
 }
 

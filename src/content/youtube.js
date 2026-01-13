@@ -279,19 +279,28 @@
       // Copy to clipboard (backup)
       await window.ClipboardUtils.copyToClipboard(prompt);
 
-      // Save prompt to storage for auto-fill
-      await chrome.storage.local.set({ pendingPrompt: prompt });
-      console.log("[YouTube Summary] Saved pendingPrompt to storage");
+      // Check if auto-fill is enabled
+      if (settings.autoFillEnabled !== false) {
+        // Save prompt to storage for auto-fill
+        await chrome.storage.local.set({ pendingPrompt: prompt });
+        console.log("[YouTube Summary] Saved pendingPrompt to storage");
 
-      showPlayerNotification("✅ Opening AI...", "success");
+        showPlayerNotification("✅ Opening AI...", "success");
 
-      // Reset button and open AI service
-      setTimeout(() => {
-        openAIService(settings);
+        // Reset button and open AI service
+        setTimeout(() => {
+          openAIService(settings);
+          btn.disabled = false;
+          const svg3 = btn.querySelector("svg");
+          if (svg3) svg3.style.animation = "";
+        }, 500);
+      } else {
+        // Auto-fill disabled - just copy to clipboard
+        showPlayerNotification("✅ Copied! Paste (Ctrl+V) into AI chat", "success");
         btn.disabled = false;
         const svg3 = btn.querySelector("svg");
         if (svg3) svg3.style.animation = "";
-      }, 500);
+      }
     } catch (error) {
       console.error("[YouTube Summary] Error:", error);
       showPlayerNotification("❌ Error: " + error.message, "error");
@@ -417,6 +426,8 @@
       url = "https://grok.com/";
     } else if (model === "gemini") {
       url = settings.geminiUrl || "https://gemini.google.com/app";
+    } else if (model === "claude") {
+      url = "https://claude.ai/new";
     }
 
     if (url) {
