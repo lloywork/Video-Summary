@@ -10,7 +10,7 @@ Extension supports multiple learning platforms, per-site AI configuration, auto-
     * 📘 **Coursera**
     * 📊 **DataCamp** (Supports both Classic & AI Coach UI)
 
-* **Multiple AI Models**: Choose between **ChatGPT**, **Google Gemini**, or **xAI Grok**.
+* **Multiple AI Models**: Choose between **ChatGPT**, **Google Gemini**, **Claude** or **xAI Grok**.
 
 * **Smart Auto-Fill**: Automatically opens your chosen AI, pastes the prompt, and prepares it for submission.
 
