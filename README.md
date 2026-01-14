@@ -1,5 +1,5 @@
 # Video Summary
-A powerful Chrome Extension that generates comprehensive summaries for videos on **YouTube, Udemy, Coursera, and DataCamp** using your favorite AI models (ChatGPT, Gemini, or Grok).
+A powerful Chrome Extension that generates comprehensive summaries for videos on **YouTube, Udemy, Coursera, and DataCamp** using your favorite AI models (ChatGPT, Gemini, Claude or Grok).
 
 Extension supports multiple learning platforms, per-site AI configuration, auto-fill capabilities, and enhanced transcript extraction.
 
