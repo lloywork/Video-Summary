@@ -13,8 +13,10 @@
     "https://grok.com/*",
     "https://chatgpt.com/*"
   ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
   "action": {
-    "default_popup": "src/options/options.html",
     "default_title": "Video Summary Settings"
   },
   "options_page": "src/options/options.html",

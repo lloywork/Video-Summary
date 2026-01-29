@@ -297,8 +297,11 @@
       // Truncate if too long
       const finalTranscript = window.PromptUtils.truncateText(transcript);
 
+      // Get prompt for Coursera (from Prompt Library)
+      const promptTemplate = await window.StorageUtils.getPromptForService('coursera');
+      
       // Generate prompt
-      const prompt = window.PromptUtils.generatePrompt(settings.customPrompt, {
+      const prompt = window.PromptUtils.generatePrompt(promptTemplate, {
         title: videoTitle,
         url: videoUrl,
         transcript: finalTranscript,
@@ -356,7 +359,9 @@
     // Determine which model to use based on aiMode
     let model;
     if (settings.aiMode === 'custom' && settings.serviceSettings) {
-      model = settings.serviceSettings.coursera || 'chatgpt';
+      // New format: { model: 'chatgpt', promptId: 'xxx' }
+      const serviceSetting = settings.serviceSettings.coursera;
+      model = (typeof serviceSetting === 'string') ? serviceSetting : (serviceSetting?.model || 'chatgpt');
     } else {
       model = settings.selectedModel || 'chatgpt';
     }

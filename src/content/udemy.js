@@ -339,8 +339,11 @@
       // Truncate if too long
       const finalTranscript = window.PromptUtils.truncateText(transcript);
 
+      // Get prompt for Udemy (from Prompt Library)
+      const promptTemplate = await window.StorageUtils.getPromptForService('udemy');
+      
       // Generate prompt
-      const prompt = window.PromptUtils.generatePrompt(settings.customPrompt, {
+      const prompt = window.PromptUtils.generatePrompt(promptTemplate, {
         title: videoTitle,
         url: videoUrl,
         transcript: finalTranscript,
@@ -436,7 +439,9 @@
     // Determine which model to use based on aiMode
     let model;
     if (settings.aiMode === 'custom' && settings.serviceSettings) {
-      model = settings.serviceSettings.udemy || 'chatgpt';
+      // New format: { model: 'chatgpt', promptId: 'xxx' }
+      const serviceSetting = settings.serviceSettings.udemy;
+      model = (typeof serviceSetting === 'string') ? serviceSetting : (serviceSetting?.model || 'chatgpt');
     } else {
       model = settings.selectedModel || 'chatgpt';
     }

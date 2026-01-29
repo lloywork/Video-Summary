@@ -5,6 +5,11 @@
   box-sizing: border-box;
 }
 
+html {
+  min-height: 100%;
+  height: 100%;
+}
+
 :root {
   --bg-primary: #ffffff;
   --bg-secondary: #f8f9fa;
@@ -21,16 +26,20 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
   background: var(--bg-secondary);
   color: var(--text-primary);
   line-height: 1.6;
   padding: 0;
   margin: 0;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
   min-width: 400px;
-  max-width: 500px;
+  max-width: 600px;
+  min-height: 100%;
 }
 
 /* Dark Theme */
@@ -60,9 +69,9 @@ body.theme-dark {
 /* Container */
 .container {
   width: 100%;
+  min-height: 100%;
   background: var(--bg-primary);
   overflow-y: auto;
-  max-height: 600px;
 }
 
 /* Header */
@@ -439,4 +448,274 @@ textarea.form-control {
 
 .container::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
+}
+
+/* ========================================
+   TAB NAVIGATION
+   ======================================== */
+.tab-nav {
+  display: flex;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 16px;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.tab-btn.active {
+  color: var(--accent-color);
+  border-bottom-color: var(--accent-color);
+}
+
+.tab-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* ========================================
+   SERVICE CONFIGURATION GRID
+   ======================================== */
+.service-config-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.service-config-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+}
+
+.service-label {
+  font-weight: 600;
+  font-size: 12px;
+  min-width: 70px;
+  color: var(--text-primary);
+}
+
+.service-selects {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+}
+
+.service-selects .form-control {
+  flex: 1;
+}
+
+.prompt-select {
+  max-width: 150px;
+}
+
+/* ========================================
+   PROMPT LIBRARY
+   ======================================== */
+.library-container {
+  display: flex;
+  min-height: 400px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.library-sidebar {
+  width: 180px;
+  border-right: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  display: flex;
+  flex-direction: column;
+}
+
+.library-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.library-header h3 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.btn-small {
+  padding: 6px 10px;
+  font-size: 11px;
+  width: auto;
+}
+
+.btn-accent {
+  background: var(--accent-color);
+  color: white;
+}
+
+.btn-accent:hover {
+  background: var(--accent-hover);
+}
+
+.prompt-list {
+  list-style: none;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.prompt-list-item {
+  padding: 10px 12px;
+  font-size: 11px;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.prompt-list-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.prompt-list-item.active {
+  background: var(--accent-color);
+  color: white;
+}
+
+.prompt-list-item .prompt-icon {
+  width: 14px;
+  height: 14px;
+  opacity: 0.6;
+}
+
+.prompt-list-item.active .prompt-icon {
+  opacity: 1;
+}
+
+/* Library Editor */
+.library-editor {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.editor-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-secondary);
+  text-align: center;
+  gap: 12px;
+}
+
+.editor-placeholder svg {
+  opacity: 0.3;
+}
+
+.editor-placeholder p {
+  font-size: 12px;
+}
+
+.editor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.prompt-textarea {
+  min-height: 200px;
+  font-family: "Consolas", "Monaco", "Courier New", monospace;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* Variable Insert Buttons */
+.variable-buttons {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.var-btn {
+  padding: 4px 10px;
+  font-size: 10px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--accent-color);
+  cursor: pointer;
+  font-family: "Consolas", "Monaco", monospace;
+  transition: all 0.15s ease;
+}
+
+.var-btn:hover {
+  background: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+/* Editor Actions */
+.editor-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.editor-actions .btn {
+  flex: 1;
+  min-width: 100px;
+}
+
+.btn-secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  background: var(--border-color);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--error-color);
+  border: 1px solid var(--error-color);
+}
+
+.btn-danger:hover {
+  background: var(--error-color);
+  color: white;
 }
