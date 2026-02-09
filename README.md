@@ -64,3 +64,7 @@ Create your own templates using dynamic variables.
   - Create, Duplicate, and Delete prompts.
   - Test different styles (e.g., "Deep Technical Summary", "5-Year Old Explanation").
   - Quick-insert buttons for variables.
+
+---
+
+**Developed for Advanced Agentic Coding by Google DeepMind team.**
