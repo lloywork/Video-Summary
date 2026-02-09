@@ -21,12 +21,12 @@ const DEFAULT_SETTINGS = {
   globalPromptId: 'default',
   
   // Per-service models (used when aiMode is 'custom')
-  // UPDATED SCHEMA: { model: string, promptId: string }
+  // UPDATED SCHEMA: { model: string, promptId: string, autoSubmit: boolean }
   serviceSettings: {
-    youtube: { model: 'chatgpt', promptId: 'default' },
-    udemy: { model: 'chatgpt', promptId: 'default' },
-    coursera: { model: 'chatgpt', promptId: 'default' },
-    datacamp: { model: 'chatgpt', promptId: 'default' }
+    youtube: { model: 'chatgpt', promptId: 'default', autoSubmit: true },
+    udemy: { model: 'chatgpt', promptId: 'default', autoSubmit: true },
+    coursera: { model: 'chatgpt', promptId: 'default', autoSubmit: true },
+    datacamp: { model: 'chatgpt', promptId: 'default', autoSubmit: true }
   },
   
   // Prompt Library
@@ -127,20 +127,27 @@ async function migrateSettings(oldData) {
 
   // 3. Migrate Service Settings
   // Old format: { youtube: 'chatgpt' }
-  // New format: { youtube: { model: 'chatgpt', promptId: '...' } }
+  // New format: { youtube: { model: 'chatgpt', promptId: '...', autoSubmit: boolean } }
   const oldServices = oldData.serviceSettings || {};
   const services = ['youtube', 'udemy', 'coursera', 'datacamp'];
+  
+  // Use old global autoFillEnabled as default for per-service autoSubmit
+  const defaultAutoSubmit = oldData.autoFillEnabled !== false;
   
   newSettings.serviceSettings = {};
   
   services.forEach(service => {
     const oldVal = oldServices[service];
-    // If oldVal is string, it's the model name. If object, assume it's already new format (unlikely here but safe)
+    // If oldVal is string, it's the model name. If object, check for existing autoSubmit
     const model = (typeof oldVal === 'string') ? oldVal : (oldVal?.model || 'chatgpt');
+    const autoSubmit = (typeof oldVal === 'object' && oldVal?.autoSubmit !== undefined) 
+      ? oldVal.autoSubmit 
+      : defaultAutoSubmit;
     
     newSettings.serviceSettings[service] = {
       model: model,
-      promptId: targetPromptId
+      promptId: targetPromptId,
+      autoSubmit: autoSubmit
     };
   });
 

@@ -312,9 +312,12 @@
 
       // Check if auto-fill is enabled
       if (settings.autoFillEnabled !== false) {
-        // Save prompt to storage for auto-fill
-        await chrome.storage.local.set({ pendingPrompt: prompt });
-        console.log("[Coursera Summary] Saved pendingPrompt to storage");
+        // Save prompt and source to storage for auto-fill
+        await chrome.storage.local.set({ 
+          pendingPrompt: prompt,
+          pendingSource: 'coursera'
+        });
+        console.log("[Coursera Summary] Saved pendingPrompt and pendingSource to storage");
 
         showPlayerNotification("✅ Opening AI...", "success");
 

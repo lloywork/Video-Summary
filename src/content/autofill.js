@@ -4,27 +4,45 @@
 (async function() {
   'use strict';
 
-  console.log('[YouTube Summary] Auto-fill script loaded on:', window.location.hostname);
+  console.log('[Video Summary] Auto-fill script loaded on:', window.location.hostname);
 
-  // Check for pending prompt
-  const result = await chrome.storage.local.get(['pendingPrompt', 'autoFillEnabled']);
+  // Check for pending prompt and source
+  const result = await chrome.storage.local.get(['pendingPrompt', 'pendingSource', 'autoFillEnabled', 'aiMode', 'serviceSettings']);
   const pendingPrompt = result.pendingPrompt;
-  const autoFillEnabled = result.autoFillEnabled !== false; // Default to true if not set
+  const pendingSource = result.pendingSource || 'youtube'; // Default to youtube for backward compat
 
   if (!pendingPrompt) {
-    console.log('[YouTube Summary] No pending prompt found');
+    console.log('[Video Summary] No pending prompt found');
     return;
   }
 
-  // Check if auto-fill is disabled
-  if (!autoFillEnabled) {
-    console.log('[YouTube Summary] Auto-fill is disabled in settings. Prompt is in clipboard, paste manually.');
-    // Clear the pending prompt since user will paste manually
-    await chrome.storage.local.remove('pendingPrompt');
+  // Determine if auto-submit should happen
+  // Logic: if aiMode is 'custom', check per-service autoSubmit; otherwise use global autoFillEnabled
+  let shouldAutoSubmit = true; // Default to true
+  
+  if (result.aiMode === 'custom' && result.serviceSettings) {
+    // Per-Service Mode: check service-specific setting
+    const serviceConfig = result.serviceSettings[pendingSource];
+    if (serviceConfig && typeof serviceConfig.autoSubmit === 'boolean') {
+      shouldAutoSubmit = serviceConfig.autoSubmit;
+    } else {
+      // Fallback to global if no per-service config
+      shouldAutoSubmit = result.autoFillEnabled !== false;
+    }
+  } else {
+    // Global Mode: use global autoFillEnabled
+    shouldAutoSubmit = result.autoFillEnabled !== false;
+  }
+
+  // Check if auto-fill is disabled globally (overrides everything)
+  if (result.autoFillEnabled === false && result.aiMode !== 'custom') {
+    console.log('[Video Summary] Auto-fill is disabled in settings. Prompt is in clipboard, paste manually.');
+    // Clear the pending data
+    await chrome.storage.local.remove(['pendingPrompt', 'pendingSource']);
     return;
   }
 
-  console.log('[YouTube Summary] Found pending prompt, attempting auto-fill...');
+  console.log(`[Video Summary] Found pending prompt from "${pendingSource}", shouldAutoSubmit: ${shouldAutoSubmit}`);
 
   // Detect which platform we're on
   const isGemini = window.location.hostname.includes('gemini.google.com');
@@ -33,13 +51,13 @@
   const isClaude = window.location.hostname.includes('claude.ai');
 
   if (isGemini) {
-    await autoFillGemini(pendingPrompt);
+    await autoFillGemini(pendingPrompt, shouldAutoSubmit);
   } else if (isGrok) {
-    await autoFillGrok(pendingPrompt);
+    await autoFillGrok(pendingPrompt, shouldAutoSubmit);
   } else if (isChatGPT) {
-    await autoFillChatGPT(pendingPrompt);
+    await autoFillChatGPT(pendingPrompt, shouldAutoSubmit);
   } else if (isClaude) {
-    await autoFillClaude(pendingPrompt);
+    await autoFillClaude(pendingPrompt, shouldAutoSubmit);
   }
 
 })();
@@ -47,9 +65,11 @@
 /**
  * Auto-fill prompt into Gemini
  * Gemini uses a rich text editor with contenteditable
+ * @param {string} prompt - The prompt to fill
+ * @param {boolean} shouldAutoSubmit - Whether to auto-submit after filling
  */
-async function autoFillGemini(prompt) {
-  console.log('[YouTube Summary] Attempting Gemini auto-fill...');
+async function autoFillGemini(prompt, shouldAutoSubmit = true) {
+  console.log('[Video Summary] Attempting Gemini auto-fill...');
 
   // Gemini selectors (may need updating if Google changes the UI)
   const selectors = [
@@ -66,7 +86,7 @@ async function autoFillGemini(prompt) {
   const inputElement = await waitForElement(selectors, 10000);
 
   if (!inputElement) {
-    console.error('[YouTube Summary] Gemini input element not found');
+    console.error('[Video Summary] Gemini input element not found');
     showNotification('Could not auto-fill. Please paste (Ctrl+V) manually.', 'warning');
     return;
   }
@@ -107,23 +127,27 @@ async function autoFillGemini(prompt) {
     }
 
     if (success) {
-      console.log('[YouTube Summary] Gemini auto-fill successful!');
-      // Clear the pending prompt
-      await chrome.storage.local.remove('pendingPrompt');
+      console.log('[Video Summary] Gemini auto-fill successful!');
+      // Clear the pending prompt and source
+      await chrome.storage.local.remove(['pendingPrompt', 'pendingSource']);
       
-      // Auto-submit the prompt
-      await sleep(500);
-      const submitted = await autoSubmitGemini();
-      
-      if (submitted) {
-        showNotification('✅ Prompt sent! AI is generating response...', 'success');
+      // Only auto-submit if shouldAutoSubmit is true
+      if (shouldAutoSubmit) {
+        await sleep(500);
+        const submitted = await autoSubmitGemini();
+        
+        if (submitted) {
+          showNotification('✅ Prompt sent! AI is generating response...', 'success');
+        } else {
+          showNotification('✅ Prompt filled! Click send or press Enter.', 'success');
+        }
       } else {
-        showNotification('✅ Prompt filled! Click send or press Enter.', 'success');
+        showNotification('✅ Prompt filled! Review and click send when ready.', 'success');
       }
     }
 
   } catch (error) {
-    console.error('[YouTube Summary] Gemini auto-fill error:', error);
+    console.error('[Video Summary] Gemini auto-fill error:', error);
     showNotification('Auto-fill failed. Please paste (Ctrl+V) manually.', 'warning');
   }
 }
@@ -131,9 +155,11 @@ async function autoFillGemini(prompt) {
 /**
  * Auto-fill prompt into Grok
  * Grok uses a textarea or contenteditable div
+ * @param {string} prompt - The prompt to fill
+ * @param {boolean} shouldAutoSubmit - Whether to auto-submit after filling
  */
-async function autoFillGrok(prompt) {
-  console.log('[YouTube Summary] Attempting Grok auto-fill...');
+async function autoFillGrok(prompt, shouldAutoSubmit = true) {
+  console.log('[Video Summary] Attempting Grok auto-fill...');
 
   // Grok selectors
   const selectors = [
@@ -150,7 +176,7 @@ async function autoFillGrok(prompt) {
   const inputElement = await waitForElement(selectors, 10000);
 
   if (!inputElement) {
-    console.error('[YouTube Summary] Grok input element not found');
+    console.error('[Video Summary] Grok input element not found');
     showNotification('Could not auto-fill. Please paste (Ctrl+V) manually.', 'warning');
     return;
   }
@@ -180,23 +206,27 @@ async function autoFillGrok(prompt) {
       }));
     }
 
-    console.log('[YouTube Summary] Grok auto-fill successful!');
+    console.log('[Video Summary] Grok auto-fill successful!');
     
-    // Clear the pending prompt
-    await chrome.storage.local.remove('pendingPrompt');
+    // Clear the pending prompt and source
+    await chrome.storage.local.remove(['pendingPrompt', 'pendingSource']);
     
-    // Auto-submit the prompt
-    await sleep(500);
-    const submitted = await autoSubmitGrok();
-    
-    if (submitted) {
-      showNotification('✅ Prompt sent! AI is generating response...', 'success');
+    // Only auto-submit if shouldAutoSubmit is true
+    if (shouldAutoSubmit) {
+      await sleep(500);
+      const submitted = await autoSubmitGrok();
+      
+      if (submitted) {
+        showNotification('✅ Prompt sent! AI is generating response...', 'success');
+      } else {
+        showNotification('✅ Prompt filled! Click send or press Enter.', 'success');
+      }
     } else {
-      showNotification('✅ Prompt filled! Click send or press Enter.', 'success');
+      showNotification('✅ Prompt filled! Review and click send when ready.', 'success');
     }
 
   } catch (error) {
-    console.error('[YouTube Summary] Grok auto-fill error:', error);
+    console.error('[Video Summary] Grok auto-fill error:', error);
     showNotification('Auto-fill failed. Please paste (Ctrl+V) manually.', 'warning');
   }
 }
@@ -393,9 +423,11 @@ async function autoSubmitGrok() {
 /**
  * Auto-fill prompt into ChatGPT
  * ChatGPT uses a ProseMirror editor with contenteditable
+ * @param {string} prompt - The prompt to fill
+ * @param {boolean} shouldAutoSubmit - Whether to auto-submit after filling
  */
-async function autoFillChatGPT(prompt) {
-  console.log('[YouTube Summary] Attempting ChatGPT auto-fill...');
+async function autoFillChatGPT(prompt, shouldAutoSubmit = true) {
+  console.log('[Video Summary] Attempting ChatGPT auto-fill...');
 
   // ChatGPT selectors - ProseMirror based editor
   const selectors = [
@@ -410,7 +442,7 @@ async function autoFillChatGPT(prompt) {
   const inputElement = await waitForElement(selectors, 10000);
 
   if (!inputElement) {
-    console.error('[YouTube Summary] ChatGPT input element not found');
+    console.error('[Video Summary] ChatGPT input element not found');
     showNotification('Could not auto-fill. Please paste (Ctrl+V) manually.', 'warning');
     return;
   }
@@ -438,7 +470,7 @@ async function autoFillChatGPT(prompt) {
         data: prompt
       }));
       
-      console.log('[YouTube Summary] ChatGPT auto-fill successful (ProseMirror)!');
+      console.log('[Video Summary] ChatGPT auto-fill successful (ProseMirror)!');
     } else if (inputElement.getAttribute('contenteditable') === 'true') {
       // Generic contenteditable fallback
       inputElement.innerText = prompt;
@@ -450,21 +482,25 @@ async function autoFillChatGPT(prompt) {
       }));
     }
 
-    // Clear the pending prompt
-    await chrome.storage.local.remove('pendingPrompt');
+    // Clear the pending prompt and source
+    await chrome.storage.local.remove(['pendingPrompt', 'pendingSource']);
     
-    // Auto-submit the prompt
-    await sleep(500);
-    const submitted = await autoSubmitChatGPT();
-    
-    if (submitted) {
-      showNotification('✅ Prompt sent! AI is generating response...', 'success');
+    // Only auto-submit if shouldAutoSubmit is true
+    if (shouldAutoSubmit) {
+      await sleep(500);
+      const submitted = await autoSubmitChatGPT();
+      
+      if (submitted) {
+        showNotification('✅ Prompt sent! AI is generating response...', 'success');
+      } else {
+        showNotification('✅ Prompt filled! Click send or press Enter.', 'success');
+      }
     } else {
-      showNotification('✅ Prompt filled! Click send or press Enter.', 'success');
+      showNotification('✅ Prompt filled! Review and click send when ready.', 'success');
     }
 
   } catch (error) {
-    console.error('[YouTube Summary] ChatGPT auto-fill error:', error);
+    console.error('[Video Summary] ChatGPT auto-fill error:', error);
     showNotification('Auto-fill failed. Please paste (Ctrl+V) manually.', 'warning');
   }
 }
@@ -536,9 +572,11 @@ async function autoSubmitChatGPT() {
 /**
  * Auto-fill prompt into Claude
  * Claude uses a ProseMirror-like contenteditable div
+ * @param {string} prompt - The prompt to fill
+ * @param {boolean} shouldAutoSubmit - Whether to auto-submit after filling
  */
-async function autoFillClaude(prompt) {
-  console.log('[YouTube Summary] Attempting Claude auto-fill...');
+async function autoFillClaude(prompt, shouldAutoSubmit = true) {
+  console.log('[Video Summary] Attempting Claude auto-fill...');
 
   // Claude selectors - contenteditable div with specific attributes
   const selectors = [
@@ -553,7 +591,7 @@ async function autoFillClaude(prompt) {
   const inputElement = await waitForElement(selectors, 10000);
 
   if (!inputElement) {
-    console.error('[YouTube Summary] Claude input element not found');
+    console.error('[Video Summary] Claude input element not found');
     showNotification('Could not auto-fill. Please paste (Ctrl+V) manually.', 'warning');
     return;
   }
@@ -581,24 +619,28 @@ async function autoFillClaude(prompt) {
         data: prompt
       }));
       
-      console.log('[YouTube Summary] Claude auto-fill successful!');
+      console.log('[Video Summary] Claude auto-fill successful!');
     }
 
-    // Clear the pending prompt
-    await chrome.storage.local.remove('pendingPrompt');
+    // Clear the pending prompt and source
+    await chrome.storage.local.remove(['pendingPrompt', 'pendingSource']);
     
-    // Auto-submit the prompt
-    await sleep(500);
-    const submitted = await autoSubmitClaude();
-    
-    if (submitted) {
-      showNotification('✅ Prompt sent! AI is generating response...', 'success');
+    // Only auto-submit if shouldAutoSubmit is true
+    if (shouldAutoSubmit) {
+      await sleep(500);
+      const submitted = await autoSubmitClaude();
+      
+      if (submitted) {
+        showNotification('✅ Prompt sent! AI is generating response...', 'success');
+      } else {
+        showNotification('✅ Prompt filled! Click send or press Enter.', 'success');
+      }
     } else {
-      showNotification('✅ Prompt filled! Click send or press Enter.', 'success');
+      showNotification('✅ Prompt filled! Review and click send when ready.', 'success');
     }
 
   } catch (error) {
-    console.error('[YouTube Summary] Claude auto-fill error:', error);
+    console.error('[Video Summary] Claude auto-fill error:', error);
     showNotification('Auto-fill failed. Please paste (Ctrl+V) manually.', 'warning');
   }
 }

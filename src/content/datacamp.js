@@ -575,9 +575,12 @@
 
       // Check if auto-fill is enabled
       if (settings.autoFillEnabled !== false) {
-        // Save prompt to storage for auto-fill
-        await chrome.storage.local.set({ pendingPrompt: prompt });
-        console.log("[DataCamp Summary] Saved pendingPrompt to storage");
+        // Save prompt and source to storage for auto-fill
+        await chrome.storage.local.set({ 
+          pendingPrompt: prompt,
+          pendingSource: 'datacamp'
+        });
+        console.log("[DataCamp Summary] Saved pendingPrompt and pendingSource to storage");
 
         showPlayerNotification("✅ Opening AI...", "success");
 

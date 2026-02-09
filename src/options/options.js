@@ -17,10 +17,10 @@ const DEFAULT_SETTINGS = {
   aiMode: 'global',
   selectedModel: 'chatgpt',
   serviceSettings: {
-    youtube: { model: 'chatgpt', promptId: 'default' },
-    udemy: { model: 'chatgpt', promptId: 'default' },
-    coursera: { model: 'chatgpt', promptId: 'default' },
-    datacamp: { model: 'chatgpt', promptId: 'default' }
+    youtube: { model: 'chatgpt', promptId: 'default', autoSubmit: true },
+    udemy: { model: 'chatgpt', promptId: 'default', autoSubmit: true },
+    coursera: { model: 'chatgpt', promptId: 'default', autoSubmit: true },
+    datacamp: { model: 'chatgpt', promptId: 'default', autoSubmit: true }
   },
   prompts: [
     {
@@ -154,16 +154,25 @@ function populateConfigurationForm() {
   document.getElementById('geminiUrl').value = currentSettings.geminiUrl || '';
   themeSelect.value = currentSettings.theme || 'auto';
 
-  // Per-service settings (new format: { model, promptId })
+  // Per-service settings (new format: { model, promptId, autoSubmit })
   const services = ['youtube', 'udemy', 'coursera', 'datacamp'];
   services.forEach(service => {
     const setting = currentSettings.serviceSettings?.[service];
     const modelSelect = document.getElementById(`${service}Model`);
+    const autoSubmitCheckbox = document.getElementById(`${service}AutoSubmit`);
     
     if (modelSelect) {
       // Handle both old format (string) and new format (object)
       const model = (typeof setting === 'string') ? setting : (setting?.model || 'chatgpt');
       modelSelect.value = model;
+    }
+    
+    if (autoSubmitCheckbox) {
+      // Default to global autoFillEnabled if not set
+      const autoSubmit = (typeof setting === 'object' && setting?.autoSubmit !== undefined) 
+        ? setting.autoSubmit 
+        : (currentSettings.autoFillEnabled !== false);
+      autoSubmitCheckbox.checked = autoSubmit;
     }
   });
 
@@ -229,13 +238,18 @@ function setupConfigurationEvents() {
 
 function updateModeUI() {
   const selectedMode = document.querySelector('input[name="aiMode"]:checked')?.value || 'global';
+  const autoFillGroup = document.getElementById('autoFillGroup');
   
   if (selectedMode === 'global') {
     globalModeSection.classList.remove('hidden');
     customModeSection.classList.add('hidden');
+    // Show global auto-fill checkbox in global mode
+    if (autoFillGroup) autoFillGroup.classList.remove('hidden');
   } else {
     globalModeSection.classList.add('hidden');
     customModeSection.classList.remove('hidden');
+    // Hide global auto-fill checkbox in per-service mode (per-service has its own toggles)
+    if (autoFillGroup) autoFillGroup.classList.add('hidden');
   }
 }
 
@@ -274,14 +288,15 @@ async function handleConfigSave(e) {
     const formData = new FormData(form);
     const aiMode = formData.get('aiMode') || 'global';
     
-    // Build service settings with new format
+    // Build service settings with new format (including autoSubmit)
     const services = ['youtube', 'udemy', 'coursera', 'datacamp'];
     const serviceSettings = {};
     
     services.forEach(service => {
       const model = formData.get(`${service}Model`) || 'chatgpt';
       const promptId = formData.get(`${service}Prompt`) || 'default';
-      serviceSettings[service] = { model, promptId };
+      const autoSubmit = formData.get(`${service}AutoSubmit`) === 'on';
+      serviceSettings[service] = { model, promptId, autoSubmit };
     });
 
     const settings = {

@@ -162,9 +162,16 @@
               </div>
             </div>
 
-            <!-- Per-Service Mode: Individual AI + Prompt Selection -->
+            <!-- Per-Service Mode: Individual AI + Prompt + Auto-submit Selection -->
             <div id="customModeSection" class="hidden">
               <div class="service-config-grid">
+                <!-- Header Row -->
+                <div class="service-config-header">
+                  <span class="header-label">Platform</span>
+                  <span class="header-label">AI Model</span>
+                  <span class="header-label">Prompt</span>
+                  <span class="header-label" title="Enable to automatically send prompt when AI page opens. Disable to review/edit before sending.">Auto-submit</span>
+                </div>
                 <!-- YouTube -->
                 <div class="service-config-item">
                   <label class="service-label">YouTube</label>
@@ -186,6 +193,10 @@
                     >
                       <!-- Populated by JS -->
                     </select>
+                    <label class="toggle-switch" title="Auto-submit for YouTube">
+                      <input type="checkbox" id="youtubeAutoSubmit" name="youtubeAutoSubmit" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
                   </div>
                 </div>
                 <!-- Udemy -->
@@ -209,6 +220,10 @@
                     >
                       <!-- Populated by JS -->
                     </select>
+                    <label class="toggle-switch" title="Auto-submit for Udemy">
+                      <input type="checkbox" id="udemyAutoSubmit" name="udemyAutoSubmit" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
                   </div>
                 </div>
                 <!-- Coursera -->
@@ -232,6 +247,10 @@
                     >
                       <!-- Populated by JS -->
                     </select>
+                    <label class="toggle-switch" title="Auto-submit for Coursera">
+                      <input type="checkbox" id="courseraAutoSubmit" name="courseraAutoSubmit" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
                   </div>
                 </div>
                 <!-- DataCamp -->
@@ -255,11 +274,15 @@
                     >
                       <!-- Populated by JS -->
                     </select>
+                    <label class="toggle-switch" title="Auto-submit for DataCamp">
+                      <input type="checkbox" id="datacampAutoSubmit" name="datacampAutoSubmit" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
                   </div>
                 </div>
               </div>
               <small class="form-hint"
-                >Configure AI model and prompt template for each platform</small
+                >Configure AI model, prompt template, and auto-submit for each platform</small
               >
             </div>
 
@@ -359,7 +382,7 @@
               </label>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="autoFillGroup">
               <label class="checkbox-label">
                 <input
                   type="checkbox"
