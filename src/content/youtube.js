@@ -282,8 +282,17 @@
       // Copy to clipboard (backup)
       await window.ClipboardUtils.copyToClipboard(prompt);
 
-      // Check if auto-fill is enabled
-      if (settings.autoFillEnabled !== false) {
+      // Determine whether to open AI tab based on mode
+      let shouldOpenTab = true;
+      if (settings.aiMode === 'custom') {
+        // Custom Mode: check service-specific autoSubmit ONLY
+        shouldOpenTab = settings.serviceSettings?.youtube?.autoSubmit ?? true;
+      } else {
+        // Global Mode: check global autoFillEnabled
+        shouldOpenTab = settings.autoFillEnabled !== false;
+      }
+
+      if (shouldOpenTab) {
         // Save prompt and source to storage for auto-fill
         await chrome.storage.local.set({ 
           pendingPrompt: prompt,
@@ -301,7 +310,7 @@
           if (svg3) svg3.style.animation = "";
         }, 500);
       } else {
-        // Auto-fill disabled - just copy to clipboard
+        // Auto-submit disabled — only copy to clipboard, do NOT open tab
         showPlayerNotification("✅ Copied! Paste (Ctrl+V) into AI chat", "success");
         btn.disabled = false;
         const svg3 = btn.querySelector("svg");
@@ -429,13 +438,13 @@
     }
 
     if (model === "chatgpt") {
-      url = "https://chatgpt.com/";
+      url = settings.chatgptUrl || "https://chatgpt.com/";
     } else if (model === "grok") {
-      url = "https://grok.com/";
+      url = settings.grokUrl || "https://grok.com/";
     } else if (model === "gemini") {
       url = settings.geminiUrl || "https://gemini.google.com/app";
     } else if (model === "claude") {
-      url = "https://claude.ai/new";
+      url = settings.claudeUrl || "https://claude.ai/new";
     }
 
     if (url) {

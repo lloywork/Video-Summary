@@ -9,19 +9,13 @@
 
   // Selectors - Coursera specific
   const SELECTORS = {
-    // Icon container (where we inject the button)
-    iconContainer: ".icon-container.css-1n3eaa3",
-    iconContainerFallback: ".icon-container",
+    // Save note button (primary injection target - inject next to it)
+    saveNoteButton: '#save-note-button',
+    captureHighlightContainer: '.rc-CaptureHighlightButton',
+    videoTitleArea: '.css-1as5hzi',
     
     // Play/Pause toggle button
     playToggle: 'button[data-testid="playToggle"]',
-    
-    // Fullscreen button (inject after this)
-    fullscreenToggle: 'button[data-testid="fullscreenToggle"]',
-    fullscreenWrapper: ".fullscreen-toggle-tooltip-wrapper",
-    
-    // Settings button
-    settingsButton: 'button[data-testid="videoSettingsMenuButton"]',
     
     // Video element
     videoElement: "video",
@@ -34,10 +28,10 @@
     phraseText: "span.css-4s48ix",
   };
 
-  // AI Sparkle Icon SVG - matching Coursera's icon style (28x28)
+  // AI Sparkle Icon SVG - matching Coursera's "Save note" icon style (16x16)
   const ICON_SVG = `
-    <svg height="28" width="28" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 2L13.09 8.26L18 6L15.74 10.91L22 12L15.74 13.09L18 18L13.09 15.74L12 22L10.91 15.74L6 18L8.26 13.09L2 12L8.26 10.91L6 6L10.91 8.26L12 2Z"/>
+    <svg aria-hidden="true" fill="none" focusable="false" height="16" viewBox="0 0 24 24" width="16" class="css-1u8qly9">
+      <path d="M12 2L13.09 8.26L18 6L15.74 10.91L22 12L15.74 13.09L18 18L13.09 15.74L12 22L10.91 15.74L6 18L8.26 13.09L2 12L8.26 10.91L6 6L10.91 8.26L12 2Z" fill="currentColor"/>
     </svg>
   `;
 
@@ -109,95 +103,62 @@
       return;
     }
 
-    // Find icon container
-    const iconContainer =
-      document.querySelector(SELECTORS.iconContainer) ||
-      document.querySelector(SELECTORS.iconContainerFallback);
+    // Goal: Insert the AI Summary button INSIDE the same container as "Save note"
+    // so they sit side-by-side in the same inline layout.
 
-    if (iconContainer) {
-      // Strategy 1: Insert BEFORE settings button (to the left of it)
-      const settingsBtn = iconContainer.querySelector(SELECTORS.settingsButton);
-      if (settingsBtn) {
-        const parent = settingsBtn.closest("span[aria-expanded]") || settingsBtn.closest("div.css-p26gm1") || settingsBtn.parentNode;
-        if (parent && parent.parentNode) {
-          console.log("[Coursera Summary] Found settings button, inserting before it...");
-          const buttonWrapper = createButtonWrapper();
-          parent.parentNode.insertBefore(buttonWrapper, parent);
-          console.log("[Coursera Summary] ✅ Button inserted successfully (before Settings)");
-          return;
-        }
-      }
-
-      // Strategy 2: Insert before Picture-in-Picture button
-      const pipBtn = iconContainer.querySelector('button[aria-label*="Picture in picture"]');
-      if (pipBtn) {
-        const parent = pipBtn.closest("div.css-4tah9w") || pipBtn.closest("div.css-p26gm1") || pipBtn.parentNode;
-        if (parent && parent.parentNode) {
-          console.log("[Coursera Summary] Found PiP button, inserting before it...");
-          const buttonWrapper = createButtonWrapper();
-          parent.parentNode.insertBefore(buttonWrapper, parent);
-          console.log("[Coursera Summary] ✅ Button inserted successfully (before PiP)");
-          return;
-        }
-      }
-
-      // Strategy 3: Insert after playback rate button
-      const playbackRateBtn = iconContainer.querySelector('button[aria-label*="playback rate"]');
-      if (playbackRateBtn) {
-        const parent = playbackRateBtn.closest("div.css-1i9jg52") || playbackRateBtn.parentNode;
-        if (parent && parent.parentNode) {
-          console.log("[Coursera Summary] Found playback rate button, inserting after it...");
-          const buttonWrapper = createButtonWrapper();
-          parent.parentNode.insertBefore(buttonWrapper, parent.nextSibling);
-          console.log("[Coursera Summary] ✅ Button inserted successfully (after Playback Rate)");
-          return;
-        }
-      }
-
-      // Strategy 4: Append to icon container
-      console.log("[Coursera Summary] Appending to icon container...");
-      const buttonWrapper = createButtonWrapper();
-      iconContainer.appendChild(buttonWrapper);
-      console.log("[Coursera Summary] ✅ Button inserted successfully (appended)");
+    // Strategy 1: Find Save note button by ID, insert our button before it in its parent
+    const saveNoteBtn = document.getElementById('save-note-button');
+    if (saveNoteBtn && saveNoteBtn.parentNode) {
+      console.log("[Coursera Summary] Found Save note button, inserting AI Summary before it (same container)...");
+      const button = createButton();
+      saveNoteBtn.parentNode.insertBefore(button, saveNoteBtn);
+      console.log("[Coursera Summary] ✅ Button inserted successfully (inline, left of Save note)");
       return;
     }
 
-    console.log("[Coursera Summary] ❌ Could not find icon container, retrying...");
+    // Strategy 2: Find .rc-CaptureHighlightButton container and insert as first child
+    const captureContainer = document.querySelector(SELECTORS.captureHighlightContainer);
+    if (captureContainer) {
+      console.log("[Coursera Summary] Found .rc-CaptureHighlightButton, inserting as first child...");
+      const button = createButton();
+      captureContainer.insertBefore(button, captureContainer.firstChild);
+      console.log("[Coursera Summary] ✅ Button inserted successfully (first child of Save note container)");
+      return;
+    }
 
-    // Retry after delay
+    // Save note button not yet rendered — retry
+    console.log("[Coursera Summary] ❌ Could not find Save note button yet, retrying...");
     setTimeout(attemptButtonInsertion, 1000);
   }
 
   /**
-   * Create a wrapper div matching Coursera's button structure
-   */
-  function createButtonWrapper() {
-    const wrapper = document.createElement("div");
-    wrapper.className = "css-p26gm1 coursera-ai-summary-wrapper";
-    
-    const tooltipWrapper = document.createElement("span");
-    tooltipWrapper.setAttribute("data-testid", "tooltip-wrapper");
-    tooltipWrapper.className = "css-1dexf9o";
-    
-    tooltipWrapper.appendChild(createButton());
-    wrapper.appendChild(tooltipWrapper);
-    
-    return wrapper;
-  }
-
-  /**
-   * Create the summary button element matching Coursera's button style
+   * Create the summary button element matching Coursera's "Save note" ghost button style
    */
   function createButton() {
     const button = document.createElement("button");
     button.id = BUTTON_ID;
     button.type = "button";
-    // Use Coursera's button classes
-    button.className = "cds-322 css-5ljz9g";
-    button.title = "AI Summary";
-    button.setAttribute("aria-label", "AI Summary - Tóm tắt bài giảng");
+    // Match Coursera's ghost button classes (same as Save note)
+    button.className = "cds-131 cds-button-disableElevation cds-button-ghost css-2bhpsm";
+    button.setAttribute("aria-disabled", "false");
     button.setAttribute("tabindex", "0");
-    button.innerHTML = ICON_SVG;
+
+    // Build inner structure to match Coursera's button pattern:
+    // <span class="cds-button-label">
+    //   <span class="cds-button-startIcon">SVG</span>
+    //   AI Summary
+    // </span>
+    const labelSpan = document.createElement("span");
+    labelSpan.className = "cds-button-label";
+
+    const iconSpan = document.createElement("span");
+    iconSpan.className = "cds-button-startIcon";
+    iconSpan.innerHTML = ICON_SVG;
+
+    labelSpan.appendChild(iconSpan);
+    labelSpan.append("AI Summary");
+
+    button.appendChild(labelSpan);
 
     // Click handler
     button.addEventListener("click", handleSummaryClick);
@@ -310,8 +271,17 @@
       // Copy to clipboard (backup)
       await window.ClipboardUtils.copyToClipboard(prompt);
 
-      // Check if auto-fill is enabled
-      if (settings.autoFillEnabled !== false) {
+      // Determine whether to open AI tab based on mode
+      let shouldOpenTab = true;
+      if (settings.aiMode === 'custom') {
+        // Custom Mode: check service-specific autoSubmit ONLY
+        shouldOpenTab = settings.serviceSettings?.coursera?.autoSubmit ?? true;
+      } else {
+        // Global Mode: check global autoFillEnabled
+        shouldOpenTab = settings.autoFillEnabled !== false;
+      }
+
+      if (shouldOpenTab) {
         // Save prompt and source to storage for auto-fill
         await chrome.storage.local.set({ 
           pendingPrompt: prompt,
@@ -329,7 +299,7 @@
           if (svg3) svg3.style.animation = "";
         }, 500);
       } else {
-        // Auto-fill disabled - just copy to clipboard
+        // Auto-submit disabled — only copy to clipboard, do NOT open tab
         showPlayerNotification("✅ Copied! Paste (Ctrl+V) into AI chat", "success");
         btn.disabled = false;
         const svg3 = btn.querySelector("svg");
@@ -370,13 +340,13 @@
     }
 
     if (model === "chatgpt") {
-      url = "https://chatgpt.com/";
+      url = settings.chatgptUrl || "https://chatgpt.com/";
     } else if (model === "grok") {
-      url = "https://grok.com/";
+      url = settings.grokUrl || "https://grok.com/";
     } else if (model === "gemini") {
       url = settings.geminiUrl || "https://gemini.google.com/app";
     } else if (model === "claude") {
-      url = "https://claude.ai/new";
+      url = settings.claudeUrl || "https://claude.ai/new";
     }
     
     if (url) {

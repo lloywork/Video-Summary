@@ -286,19 +286,63 @@
               >
             </div>
 
-            <div class="form-group" id="geminiUrlGroup">
-              <label for="geminiUrl">Gemini URL</label>
-              <input
-                type="url"
-                id="geminiUrl"
-                name="geminiUrl"
-                class="form-control"
-                placeholder="https://gemini.google.com/u/1/app"
-              />
-              <small class="form-hint"
-                >Select your active account URL (u/0, u/1, u/2, etc.)</small
-              >
-            </div>
+            <details class="advanced-section" id="advancedAIConfig">
+              <summary class="advanced-toggle">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 15l-5-5h10l-5 5z" fill="currentColor"/>
+                </svg>
+                Advanced: AI Connection Configuration
+              </summary>
+              <div class="advanced-content">
+                <small class="form-hint" style="margin-bottom: 12px; display: block;">
+                  Set custom URLs for each AI service to maintain conversation context. Leave blank to use the default homepage.
+                </small>
+                <div class="form-group">
+                  <label for="chatgptUrl">ChatGPT URL</label>
+                  <input
+                    type="url"
+                    id="chatgptUrl"
+                    name="chatgptUrl"
+                    class="form-control"
+                    placeholder="https://chatgpt.com/ (default)"
+                  />
+                  <small class="form-hint">e.g., https://chatgpt.com/c/abc123 for a specific conversation</small>
+                </div>
+                <div class="form-group">
+                  <label for="geminiUrl">Gemini URL</label>
+                  <input
+                    type="url"
+                    id="geminiUrl"
+                    name="geminiUrl"
+                    class="form-control"
+                    placeholder="https://gemini.google.com/app (default)"
+                  />
+                  <small class="form-hint">e.g., https://gemini.google.com/u/1/app for a specific account</small>
+                </div>
+                <div class="form-group">
+                  <label for="grokUrl">Grok URL</label>
+                  <input
+                    type="url"
+                    id="grokUrl"
+                    name="grokUrl"
+                    class="form-control"
+                    placeholder="https://grok.com/ (default)"
+                  />
+                  <small class="form-hint">e.g., https://grok.com/chat/abc123 for a specific thread</small>
+                </div>
+                <div class="form-group">
+                  <label for="claudeUrl">Claude URL</label>
+                  <input
+                    type="url"
+                    id="claudeUrl"
+                    name="claudeUrl"
+                    class="form-control"
+                    placeholder="https://claude.ai/new (default)"
+                  />
+                  <small class="form-hint">e.g., https://claude.ai/chat/abc123 for a specific conversation</small>
+                </div>
+              </div>
+            </details>
           </section>
 
           <!-- Section 2: General Settings -->

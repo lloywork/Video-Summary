@@ -317,20 +317,56 @@ textarea.form-control {
   font-weight: normal;
 }
 
-/* Dynamic Visibility - FIX: Only hide when explicitly needed */
-#geminiUrlGroup {
-  opacity: 1;
-  max-height: 500px;
-  overflow: visible;
-  transition: all 0.3s ease;
-  margin-bottom: 14px;
+/* Advanced Section (Collapsible) */
+.advanced-section {
+  margin-top: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  overflow: hidden;
 }
 
-#geminiUrlGroup.hidden {
-  max-height: 0;
-  opacity: 0;
-  margin-bottom: 0;
-  overflow: hidden;
+.advanced-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  list-style: none;
+  user-select: none;
+}
+
+.advanced-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.advanced-toggle:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.advanced-toggle svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.advanced-section[open] > .advanced-toggle svg {
+  transform: rotate(0deg);
+}
+
+.advanced-section:not([open]) > .advanced-toggle svg {
+  transform: rotate(-90deg);
+}
+
+.advanced-content {
+  padding: 14px;
+  border-top: 1px solid var(--border-color);
 }
 
 /* AI Mode Sections */

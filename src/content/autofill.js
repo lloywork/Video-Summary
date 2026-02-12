@@ -16,30 +16,27 @@
     return;
   }
 
-  // Determine if auto-submit should happen
-  // Logic: if aiMode is 'custom', check per-service autoSubmit; otherwise use global autoFillEnabled
+  // Determine if auto-submit should happen.
+  // STRICT ISOLATION: Custom mode NEVER reads global autoFillEnabled.
   let shouldAutoSubmit = true; // Default to true
   
-  if (result.aiMode === 'custom' && result.serviceSettings) {
-    // Per-Service Mode: check service-specific setting
-    const serviceConfig = result.serviceSettings[pendingSource];
+  if (result.aiMode === 'custom') {
+    // Per-Service Mode: check service-specific setting ONLY
+    const serviceConfig = result.serviceSettings?.[pendingSource];
     if (serviceConfig && typeof serviceConfig.autoSubmit === 'boolean') {
       shouldAutoSubmit = serviceConfig.autoSubmit;
     } else {
-      // Fallback to global if no per-service config
-      shouldAutoSubmit = result.autoFillEnabled !== false;
+      // No service config found — use hardcoded default, NOT global
+      shouldAutoSubmit = true;
     }
   } else {
     // Global Mode: use global autoFillEnabled
-    shouldAutoSubmit = result.autoFillEnabled !== false;
-  }
-
-  // Check if auto-fill is disabled globally (overrides everything)
-  if (result.autoFillEnabled === false && result.aiMode !== 'custom') {
-    console.log('[Video Summary] Auto-fill is disabled in settings. Prompt is in clipboard, paste manually.');
-    // Clear the pending data
-    await chrome.storage.local.remove(['pendingPrompt', 'pendingSource']);
-    return;
+    if (result.autoFillEnabled === false) {
+      console.log('[Video Summary] Auto-fill is disabled in global settings. Prompt is in clipboard, paste manually.');
+      await chrome.storage.local.remove(['pendingPrompt', 'pendingSource']);
+      return;
+    }
+    shouldAutoSubmit = true;
   }
 
   console.log(`[Video Summary] Found pending prompt from "${pendingSource}", shouldAutoSubmit: ${shouldAutoSubmit}`);

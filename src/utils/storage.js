@@ -39,7 +39,10 @@ const DEFAULT_SETTINGS = {
     }
   ],
   
+  chatgptUrl: '',
   geminiUrl: 'https://gemini.google.com/app',
+  grokUrl: '',
+  claudeUrl: '',
   theme: 'auto',
   copyFormat: 'markdown',
   showButton: true,
@@ -90,7 +93,7 @@ async function migrateSettings(oldData) {
   const newSettings = { ...DEFAULT_SETTINGS };
   
   // 1. Preserve simple scalar values
-  const keysToCopy = ['aiMode', 'selectedModel', 'geminiUrl', 'theme', 'copyFormat', 'showButton', 'autoFillEnabled'];
+  const keysToCopy = ['aiMode', 'selectedModel', 'chatgptUrl', 'geminiUrl', 'grokUrl', 'claudeUrl', 'theme', 'copyFormat', 'showButton', 'autoFillEnabled'];
   keysToCopy.forEach(key => {
     if (oldData[key] !== undefined) {
       newSettings[key] = oldData[key];
@@ -131,8 +134,9 @@ async function migrateSettings(oldData) {
   const oldServices = oldData.serviceSettings || {};
   const services = ['youtube', 'udemy', 'coursera', 'datacamp'];
   
-  // Use old global autoFillEnabled as default for per-service autoSubmit
-  const defaultAutoSubmit = oldData.autoFillEnabled !== false;
+  // Custom mode defaults are independent of Global mode.
+  // Always default autoSubmit to true for a clean, predictable Custom mode.
+  const DEFAULT_AUTO_SUBMIT = true;
   
   newSettings.serviceSettings = {};
   
@@ -142,7 +146,7 @@ async function migrateSettings(oldData) {
     const model = (typeof oldVal === 'string') ? oldVal : (oldVal?.model || 'chatgpt');
     const autoSubmit = (typeof oldVal === 'object' && oldVal?.autoSubmit !== undefined) 
       ? oldVal.autoSubmit 
-      : defaultAutoSubmit;
+      : DEFAULT_AUTO_SUBMIT;
     
     newSettings.serviceSettings[service] = {
       model: model,

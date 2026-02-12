@@ -1,29 +1,18 @@
-/* Coursera Summary - Player Button Styles */
-/* Matches Coursera's native control bar button styling */
+/* Coursera Summary - Button Styles */
+/* Matches Coursera's native "Save note" ghost button styling */
 
-/* Main player button */
+/* Main button - add right margin for spacing from Save note */
 #coursera_ai_summary_btn {
-  opacity: 0.9;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
+  margin-right: 8px;
+  transition: opacity 0.2s ease, color 0.2s ease;
 }
 
 #coursera_ai_summary_btn:hover {
-  opacity: 1;
-  transform: scale(1.1);
-  background: rgba(255, 255, 255, 0.1);
+  opacity: 0.8;
 }
 
 #coursera_ai_summary_btn:focus {
-  outline: 2px solid #0056D2; /* Coursera blue */
+  outline: 2px solid #0056d2; /* Coursera blue */
   outline-offset: 2px;
 }
 
@@ -38,7 +27,6 @@
 }
 
 /* Loading spin animation */
-#coursera_ai_summary_btn.loading svg,
 #coursera_ai_summary_btn:disabled svg {
   animation: coursera-summary-spin 1s linear infinite;
 }
@@ -60,7 +48,7 @@
   transform: translateX(-50%);
   padding: 12px 24px;
   border-radius: 8px;
-  font-family: 'Source Sans Pro', Arial, sans-serif;
+  font-family: "Source Sans Pro", Arial, sans-serif;
   font-size: 14px;
   font-weight: 600;
   z-index: 999999;
@@ -89,24 +77,4 @@
     opacity: 0;
     transform: translateX(-50%) translateY(10px);
   }
-}
-
-/* Button wrapper styling */
-.coursera-ai-summary-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Hover glow effect */
-#coursera_ai_summary_btn:hover svg {
-  filter: drop-shadow(0 0 4px rgba(0, 86, 210, 0.6));
-}
-
-/* Ensure button matches Coursera's control bar height */
-#coursera_ai_summary_btn {
-  height: 28px;
-  width: 28px;
-  min-width: 28px;
-  min-height: 28px;
 }

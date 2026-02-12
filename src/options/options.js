@@ -30,7 +30,10 @@ const DEFAULT_SETTINGS = {
       content: DEFAULT_PROMPT_CONTENT
     }
   ],
+  chatgptUrl: '',
   geminiUrl: 'https://gemini.google.com/app',
+  grokUrl: '',
+  claudeUrl: '',
   theme: 'auto',
   copyFormat: 'markdown',
   showButton: true,
@@ -48,7 +51,7 @@ let selectedPromptId = null;
 // ========================================
 let form, saveBtn, saveStatus;
 let globalModeSection, customModeSection;
-let selectedModelSelect, globalPromptSelect, geminiUrlGroup, themeSelect;
+let selectedModelSelect, globalPromptSelect, themeSelect;
 let youtubeModelSelect, udemyModelSelect, courseraModelSelect, datacampModelSelect;
 let youtubePromptSelect, udemyPromptSelect, courseraPromptSelect, datacampPromptSelect;
 
@@ -74,7 +77,7 @@ async function init() {
   
   selectedModelSelect = document.getElementById('selectedModel');
   globalPromptSelect = document.getElementById('globalPrompt');
-  geminiUrlGroup = document.getElementById('geminiUrlGroup');
+  // geminiUrlGroup removed — now part of Advanced section
   themeSelect = document.getElementById('theme');
   
   youtubeModelSelect = document.getElementById('youtubeModel');
@@ -112,7 +115,6 @@ async function init() {
 
   // Initial UI updates
   updateModeUI();
-  updateGeminiUrlVisibility();
   applyTheme(themeSelect.value);
   renderPromptList();
   populatePromptSelects();
@@ -151,8 +153,13 @@ function populateConfigurationForm() {
 
   // Global model
   selectedModelSelect.value = currentSettings.selectedModel || 'chatgpt';
-  document.getElementById('geminiUrl').value = currentSettings.geminiUrl || '';
   themeSelect.value = currentSettings.theme || 'auto';
+
+  // Populate Advanced AI Connection URLs
+  document.getElementById('chatgptUrl').value = currentSettings.chatgptUrl || '';
+  document.getElementById('geminiUrl').value = currentSettings.geminiUrl || '';
+  document.getElementById('grokUrl').value = currentSettings.grokUrl || '';
+  document.getElementById('claudeUrl').value = currentSettings.claudeUrl || '';
 
   // Per-service settings (new format: { model, promptId, autoSubmit })
   const services = ['youtube', 'udemy', 'coursera', 'datacamp'];
@@ -168,10 +175,10 @@ function populateConfigurationForm() {
     }
     
     if (autoSubmitCheckbox) {
-      // Default to global autoFillEnabled if not set
+      // Default to true (strict isolation — never inherit from global autoFillEnabled)
       const autoSubmit = (typeof setting === 'object' && setting?.autoSubmit !== undefined) 
         ? setting.autoSubmit 
-        : (currentSettings.autoFillEnabled !== false);
+        : true;
       autoSubmitCheckbox.checked = autoSubmit;
     }
   });
@@ -216,15 +223,7 @@ function setupConfigurationEvents() {
   document.querySelectorAll('input[name="aiMode"]').forEach(radio => {
     radio.addEventListener('change', () => {
       updateModeUI();
-      updateGeminiUrlVisibility();
     });
-  });
-
-  // Model changes (for Gemini URL visibility)
-  [selectedModelSelect, youtubeModelSelect, udemyModelSelect, courseraModelSelect, datacampModelSelect].forEach(select => {
-    if (select) {
-      select.addEventListener('change', updateGeminiUrlVisibility);
-    }
   });
 
   // Theme change
@@ -253,26 +252,7 @@ function updateModeUI() {
   }
 }
 
-function updateGeminiUrlVisibility() {
-  const selectedMode = document.querySelector('input[name="aiMode"]:checked')?.value || 'global';
-  let showGeminiUrl = false;
-  
-  if (selectedMode === 'global') {
-    showGeminiUrl = selectedModelSelect.value === 'gemini';
-  } else {
-    showGeminiUrl = 
-      youtubeModelSelect?.value === 'gemini' ||
-      udemyModelSelect?.value === 'gemini' ||
-      courseraModelSelect?.value === 'gemini' ||
-      datacampModelSelect?.value === 'gemini';
-  }
-  
-  if (showGeminiUrl) {
-    geminiUrlGroup.classList.remove('hidden');
-  } else {
-    geminiUrlGroup.classList.add('hidden');
-  }
-}
+// updateGeminiUrlVisibility removed — all AI URLs are now always visible in the Advanced section
 
 function applyTheme(theme) {
   document.body.className = `theme-${theme}`;
@@ -305,7 +285,10 @@ async function handleConfigSave(e) {
       globalPromptId: formData.get('globalPrompt') || 'default',
       serviceSettings,
       prompts: currentSettings.prompts, // Preserve prompts
+      chatgptUrl: formData.get('chatgptUrl') || '',
       geminiUrl: formData.get('geminiUrl') || DEFAULT_SETTINGS.geminiUrl,
+      grokUrl: formData.get('grokUrl') || '',
+      claudeUrl: formData.get('claudeUrl') || '',
       theme: formData.get('theme'),
       copyFormat: formData.get('copyFormat'),
       showButton: formData.get('showButton') === 'on',
