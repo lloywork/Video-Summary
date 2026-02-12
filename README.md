@@ -32,7 +32,7 @@ This extension now uses a modular architecture and requires a build step.
 
 ### For Users (Fast)
 
-1. Download the latest version from [Releases]([https://github.com/your-repo/releases](https://github.com/lloywork/Video-Summary/releases)).
+1. Download the latest version from [Releases](https://github.com/lloywork/Video-Summary/releases).
 2. Extract the ZIP file.
 3. Open Chrome and navigate to `chrome://extensions/`.
 4. Toggle **Developer mode** on.
