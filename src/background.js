@@ -4,7 +4,7 @@
 let dashboardWindowId = null;
 
 const WINDOW_CONFIG = {
-  url: 'src/options/options.html',
+  url: 'options/options.html',
   type: 'popup',
   width: 500,
   height: 800

@@ -26,15 +26,40 @@ Extension supports multiple learning platforms, specialized prompt management, a
 
 - **Privacy Focused**: Runs 100% locally in your browser. No external servers.
 
-## 🚀 Installation
+## 🚀 Installation & Development
 
-Since this is a personal developer extension, you need to load it manually:
+This extension now uses a modular architecture and requires a build step.
 
-1.  Download or clone this repository to your computer.
-2.  Open Chrome and navigate to `chrome://extensions/`.
-3.  Toggle **Developer mode** on (top right corner).
-4.  Click **Load unpacked**.
-5.  Select the folder containing this extension.
+### For Users (Fast)
+
+1. Download the latest version from [Releases](https://github.com/your-repo/releases).
+2. Extract the ZIP file.
+3. Open Chrome and navigate to `chrome://extensions/`.
+4. Toggle **Developer mode** on.
+5. Click **Load unpacked** and select the **`Video Summary Extension`** folder.
+
+### For Developers (Build from Source)
+
+1. Clone this repository.
+2. Ensure you have [Node.js](https://nodejs.org/) installed.
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Build the extension:
+   ```bash
+   npm run build
+   ```
+   (Or use `npm run dev` for automatic rebuilding during development).
+5. Load the extension in Chrome from the **`Video Summary Extension`** folder.
+
+## 🏗️ Architecture (V2)
+
+The project has been refactored into a modular, inheritance-based system:
+
+- **`src/core/`**: Shared classes like `BasePlatform`, `Notification`, and `AIBridge`.
+- **`src/platforms/`**: Platform-specific adapters (YouTube, Udemy, etc.).
+- **Webpack**: Bundles the modular components into standalone scripts for performance and reliability.
 
 ## ⚙️ Configuration
 

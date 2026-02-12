@@ -1,6 +1,6 @@
 {
   "name": "Video Summary",
-  "version": "2.4.1",
+  "version": "3.0.0",
   "manifest_version": 3,
   "description": "Personal Video Summary with AI - Supports YouTube, Udemy, Coursera, DataCamp, multiple models & custom API fallback",
   "permissions": ["storage", "activeTab", "clipboardWrite"],
