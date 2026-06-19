@@ -36,6 +36,7 @@ const DEFAULT_SETTINGS = {
   claudeUrl: '',
   theme: 'auto',
   copyFormat: 'markdown',
+  includeTimestamps: true,
   showButton: true,
   autoFillEnabled: true
 };
@@ -54,6 +55,9 @@ let globalModeSection, customModeSection;
 let selectedModelSelect, globalPromptSelect, themeSelect;
 let youtubeModelSelect, udemyModelSelect, courseraModelSelect, datacampModelSelect;
 let youtubePromptSelect, udemyPromptSelect, courseraPromptSelect, datacampPromptSelect;
+
+// Import/Export elements
+let exportBtn, importBtn, importFileInput;
 
 // Library elements
 let promptList, editorPlaceholder, editorForm;
@@ -85,6 +89,11 @@ async function init() {
   courseraModelSelect = document.getElementById('courseraModel');
   datacampModelSelect = document.getElementById('datacampModel');
   
+  // Import/Export elements
+  exportBtn = document.getElementById('exportBtn');
+  importBtn = document.getElementById('importBtn');
+  importFileInput = document.getElementById('importFile');
+
   youtubePromptSelect = document.getElementById('youtubePrompt');
   udemyPromptSelect = document.getElementById('udemyPrompt');
   courseraPromptSelect = document.getElementById('courseraPrompt');
@@ -190,6 +199,7 @@ function populateConfigurationForm() {
   // Checkboxes
   document.getElementById('showButton').checked = currentSettings.showButton !== false;
   document.getElementById('autoFillEnabled').checked = currentSettings.autoFillEnabled !== false;
+  document.getElementById('includeTimestamps').checked = currentSettings.includeTimestamps !== false;
 }
 
 // ========================================
@@ -233,6 +243,11 @@ function setupConfigurationEvents() {
 
   // Form submit
   form.addEventListener('submit', handleConfigSave);
+
+  // Import/Export
+  exportBtn.addEventListener('click', exportSettings);
+  importBtn.addEventListener('click', () => importFileInput.click());
+  importFileInput.addEventListener('change', importSettings);
 }
 
 function updateModeUI() {
@@ -291,6 +306,7 @@ async function handleConfigSave(e) {
       claudeUrl: formData.get('claudeUrl') || '',
       theme: formData.get('theme'),
       copyFormat: formData.get('copyFormat'),
+      includeTimestamps: formData.get('includeTimestamps') === 'on',
       showButton: formData.get('showButton') === 'on',
       autoFillEnabled: formData.get('autoFillEnabled') === 'on'
     };
@@ -566,6 +582,105 @@ function populatePromptSelects() {
       select.appendChild(option);
     });
   });
+}
+
+// ========================================
+// IMPORT / EXPORT
+// ========================================
+
+/**
+ * Export all settings to a JSON file download.
+ */
+async function exportSettings() {
+  try {
+    const data = await chrome.storage.local.get(null);
+
+    // Inject metadata for traceability
+    const manifest = chrome.runtime.getManifest();
+    data._metadata = {
+      version: manifest.version,
+      timestamp: new Date().toISOString(),
+      source: 'video-summary-extension'
+    };
+
+    const jsonString = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    // Build filename: video-summary-settings-YYYY-MM-DD.json
+    const dateStr = new Date().toISOString().split('T')[0];
+    const filename = `video-summary-settings-${dateStr}.json`;
+
+    // Trigger download via temporary <a> element
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
+
+    showStatus(saveStatus, '✅ Settings exported!', 'success');
+    setTimeout(() => hideStatus(saveStatus), 2500);
+  } catch (error) {
+    console.error('[Export] Error:', error);
+    showStatus(saveStatus, '❌ Export failed', 'error');
+    setTimeout(() => hideStatus(saveStatus), 2500);
+  }
+}
+
+/**
+ * Import settings from a user-selected JSON file.
+ * @param {Event} event - change event from the file input
+ */
+function importSettings(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = async (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+
+      // Validate: must contain a prompts array
+      if (!data.prompts || !Array.isArray(data.prompts)) {
+        showStatus(saveStatus, '❌ Invalid settings file (missing prompts)', 'error');
+        setTimeout(() => hideStatus(saveStatus), 3000);
+        return;
+      }
+
+      // Confirm overwrite
+      const confirmed = confirm(
+        'This will overwrite ALL current settings (AI config, prompts, theme, etc.).\n\nAre you sure you want to continue?'
+      );
+      if (!confirmed) return;
+
+      // Remove metadata before writing to storage
+      delete data._metadata;
+
+      await chrome.storage.local.set(data);
+      showStatus(saveStatus, '✅ Settings imported! Reloading...', 'success');
+
+      // Reload page to reflect new settings
+      setTimeout(() => location.reload(), 1000);
+    } catch (parseError) {
+      console.error('[Import] Parse error:', parseError);
+      showStatus(saveStatus, '❌ Invalid JSON file', 'error');
+      setTimeout(() => hideStatus(saveStatus), 3000);
+    }
+  };
+
+  reader.onerror = () => {
+    console.error('[Import] FileReader error');
+    showStatus(saveStatus, '❌ Could not read file', 'error');
+    setTimeout(() => hideStatus(saveStatus), 3000);
+  };
+
+  reader.readAsText(file);
+
+  // Reset file input so the same file can be re-selected
+  importFileInput.value = '';
 }
 
 // ========================================

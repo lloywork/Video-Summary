@@ -167,7 +167,7 @@ class UdemyPlatform extends BasePlatform {
   }
 
   async getTranscript(settings) {
-    return window.TranscriptUtils.getUdemyTranscriptFromDom(settings.copyFormat);
+    return window.TranscriptUtils.getUdemyTranscriptFromDom(settings.copyFormat, settings.includeTimestamps !== false);
   }
 
   // ═══════════════════════════════════════════════════════
@@ -232,7 +232,7 @@ class UdemyPlatform extends BasePlatform {
 
   _createButtonWrapper() {
     const wrapper = document.createElement('div');
-    wrapper.className = 'popper-module--popper--mM5Ie';
+    wrapper.className = 'popper-module--popper--mM5Ie udemy-ai-summary-wrapper';
     wrapper.appendChild(this.createButton());
     return wrapper;
   }
@@ -240,8 +240,11 @@ class UdemyPlatform extends BasePlatform {
   _insertBeforeWrapped(controlBar, selector, label) {
     const targetBtn = controlBar.querySelector(selector);
     if (targetBtn) {
-      const wrapper = targetBtn.closest('.popper-module--popper--mM5Ie');
-      if (wrapper?.parentNode) {
+      // Find the closest wrapper using a wildcard for CSS Modules class hashes, falling back to specific class or the button itself.
+      const wrapper = targetBtn.closest('[class*="popper-module--popper--"]') || 
+                      targetBtn.closest('.popper-module--popper--mM5Ie') || 
+                      targetBtn;
+      if (wrapper && wrapper.parentNode) {
         this._log(`Found ${label} button, inserting before it...`);
         wrapper.parentNode.insertBefore(this._createButtonWrapper(), wrapper);
         this._log(`✅ Button inserted (before ${label})`);

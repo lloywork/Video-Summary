@@ -1,0 +1,88 @@
+{
+  "name": "Video Summary",
+  "version": "3.0.0",
+  "manifest_version": 3,
+  "description": "Personal Video Summary with AI - Supports YouTube, Udemy, Coursera, DataCamp, multiple models & custom API fallback",
+  "permissions": ["storage", "activeTab", "clipboardWrite"],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://www.udemy.com/*",
+    "https://www.coursera.org/*",
+    "https://*.datacamp.com/*",
+    "https://gemini.google.com/*",
+    "https://grok.com/*",
+    "https://chatgpt.com/*"
+  ],
+  "background": {
+    "service_worker": "background.bundle.js"
+  },
+  "action": {
+    "default_title": "Video Summary Settings"
+  },
+  "options_page": "options/options.html",
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": [
+        "utils/storage.js",
+        "utils/clipboard.js",
+        "content/transcript.js",
+        "content/prompt.js",
+        "content/youtube.bundle.js"
+      ],
+      "css": ["content/style.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.udemy.com/*"],
+      "js": [
+        "utils/storage.js",
+        "utils/clipboard.js",
+        "content/transcript.js",
+        "content/prompt.js",
+        "content/udemy.bundle.js"
+      ],
+      "css": ["content/style.css", "content/udemy-style.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.coursera.org/*"],
+      "js": [
+        "utils/storage.js",
+        "utils/clipboard.js",
+        "content/transcript.js",
+        "content/prompt.js",
+        "content/coursera.bundle.js"
+      ],
+      "css": ["content/style.css", "content/coursera-style.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://*.datacamp.com/*",
+        "https://www.datacamp.com/*",
+        "https://app.datacamp.com/*",
+        "https://learn.datacamp.com/*",
+        "https://campus.datacamp.com/*"
+      ],
+      "js": [
+        "utils/storage.js",
+        "utils/clipboard.js",
+        "content/transcript.js",
+        "content/prompt.js",
+        "content/datacamp.bundle.js"
+      ],
+      "css": ["content/style.css", "content/datacamp-style.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://gemini.google.com/*",
+        "https://grok.com/*",
+        "https://chatgpt.com/*"
+      ],
+      "js": ["content/autofill.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

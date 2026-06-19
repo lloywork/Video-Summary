@@ -45,6 +45,7 @@ const DEFAULT_SETTINGS = {
   claudeUrl: '',
   theme: 'auto',
   copyFormat: 'markdown',
+  includeTimestamps: true,  // Include timestamps in transcript output
   showButton: true,
   autoFillEnabled: true,  // Auto-fill & Auto-submit toggle
   
@@ -93,7 +94,7 @@ async function migrateSettings(oldData) {
   const newSettings = { ...DEFAULT_SETTINGS };
   
   // 1. Preserve simple scalar values
-  const keysToCopy = ['aiMode', 'selectedModel', 'chatgptUrl', 'geminiUrl', 'grokUrl', 'claudeUrl', 'theme', 'copyFormat', 'showButton', 'autoFillEnabled'];
+  const keysToCopy = ['aiMode', 'selectedModel', 'chatgptUrl', 'geminiUrl', 'grokUrl', 'claudeUrl', 'theme', 'copyFormat', 'includeTimestamps', 'showButton', 'autoFillEnabled'];
   keysToCopy.forEach(key => {
     if (oldData[key] !== undefined) {
       newSettings[key] = oldData[key];

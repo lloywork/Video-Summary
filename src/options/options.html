@@ -29,7 +29,7 @@
         </div>
       </header>
 
-      <!-- Tab Navigation -->
+      <!-- Tab Navigation — Segmented Pill Control -->
       <nav class="tab-nav">
         <button type="button" class="tab-btn active" data-tab="configuration">
           <svg
@@ -147,7 +147,10 @@
                   <option value="grok">Grok</option>
                   <option value="claude">Claude</option>
                 </select>
-                <small class="form-hint">Choose which AI service to open after copying the transcript</small>
+                <small class="form-hint"
+                  >Choose which AI service to open after copying the
+                  transcript</small
+                >
               </div>
               <div class="form-group">
                 <label for="globalPrompt">Select Prompt Template</label>
@@ -158,7 +161,9 @@
                 >
                   <!-- Populated by JS -->
                 </select>
-                <small class="form-hint">Choose which prompt template to use for all platforms</small>
+                <small class="form-hint"
+                  >Choose which prompt template to use for all platforms</small
+                >
               </div>
             </div>
 
@@ -170,7 +175,11 @@
                   <span class="header-label">Platform</span>
                   <span class="header-label">AI Model</span>
                   <span class="header-label">Prompt</span>
-                  <span class="header-label" title="Enable to automatically send prompt when AI page opens. Disable to review/edit before sending.">Auto-submit</span>
+                  <span
+                    class="header-label"
+                    title="Enable to automatically send prompt when AI page opens. Disable to review/edit before sending."
+                    >Auto-submit</span
+                  >
                 </div>
                 <!-- YouTube -->
                 <div class="service-config-item">
@@ -193,8 +202,16 @@
                     >
                       <!-- Populated by JS -->
                     </select>
-                    <label class="toggle-switch" title="Auto-submit for YouTube">
-                      <input type="checkbox" id="youtubeAutoSubmit" name="youtubeAutoSubmit" checked />
+                    <label
+                      class="toggle-switch"
+                      title="Auto-submit for YouTube"
+                    >
+                      <input
+                        type="checkbox"
+                        id="youtubeAutoSubmit"
+                        name="youtubeAutoSubmit"
+                        checked
+                      />
                       <span class="toggle-slider"></span>
                     </label>
                   </div>
@@ -221,7 +238,12 @@
                       <!-- Populated by JS -->
                     </select>
                     <label class="toggle-switch" title="Auto-submit for Udemy">
-                      <input type="checkbox" id="udemyAutoSubmit" name="udemyAutoSubmit" checked />
+                      <input
+                        type="checkbox"
+                        id="udemyAutoSubmit"
+                        name="udemyAutoSubmit"
+                        checked
+                      />
                       <span class="toggle-slider"></span>
                     </label>
                   </div>
@@ -247,8 +269,16 @@
                     >
                       <!-- Populated by JS -->
                     </select>
-                    <label class="toggle-switch" title="Auto-submit for Coursera">
-                      <input type="checkbox" id="courseraAutoSubmit" name="courseraAutoSubmit" checked />
+                    <label
+                      class="toggle-switch"
+                      title="Auto-submit for Coursera"
+                    >
+                      <input
+                        type="checkbox"
+                        id="courseraAutoSubmit"
+                        name="courseraAutoSubmit"
+                        checked
+                      />
                       <span class="toggle-slider"></span>
                     </label>
                   </div>
@@ -274,28 +304,47 @@
                     >
                       <!-- Populated by JS -->
                     </select>
-                    <label class="toggle-switch" title="Auto-submit for DataCamp">
-                      <input type="checkbox" id="datacampAutoSubmit" name="datacampAutoSubmit" checked />
+                    <label
+                      class="toggle-switch"
+                      title="Auto-submit for DataCamp"
+                    >
+                      <input
+                        type="checkbox"
+                        id="datacampAutoSubmit"
+                        name="datacampAutoSubmit"
+                        checked
+                      />
                       <span class="toggle-slider"></span>
                     </label>
                   </div>
                 </div>
               </div>
               <small class="form-hint"
-                >Configure AI model, prompt template, and auto-submit for each platform</small
+                >Configure AI model, prompt template, and auto-submit for each
+                platform</small
               >
             </div>
 
             <details class="advanced-section" id="advancedAIConfig">
               <summary class="advanced-toggle">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 15l-5-5h10l-5 5z" fill="currentColor"/>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M12 15l-5-5h10l-5 5z" fill="currentColor" />
                 </svg>
                 Advanced: AI Connection Configuration
               </summary>
               <div class="advanced-content">
-                <small class="form-hint" style="margin-bottom: 12px; display: block;">
-                  Set custom URLs for each AI service to maintain conversation context. Leave blank to use the default homepage.
+                <small
+                  class="form-hint"
+                  style="margin-bottom: 12px; display: block"
+                >
+                  Set custom URLs for each AI service to maintain conversation
+                  context. Leave blank to use the default homepage.
                 </small>
                 <div class="form-group">
                   <label for="chatgptUrl">ChatGPT URL</label>
@@ -306,7 +355,10 @@
                     class="form-control"
                     placeholder="https://chatgpt.com/ (default)"
                   />
-                  <small class="form-hint">e.g., https://chatgpt.com/c/abc123 for a specific conversation</small>
+                  <small class="form-hint"
+                    >e.g., https://chatgpt.com/c/abc123 for a specific
+                    conversation</small
+                  >
                 </div>
                 <div class="form-group">
                   <label for="geminiUrl">Gemini URL</label>
@@ -317,7 +369,10 @@
                     class="form-control"
                     placeholder="https://gemini.google.com/app (default)"
                   />
-                  <small class="form-hint">e.g., https://gemini.google.com/u/1/app for a specific account</small>
+                  <small class="form-hint"
+                    >e.g., https://gemini.google.com/u/1/app for a specific
+                    account</small
+                  >
                 </div>
                 <div class="form-group">
                   <label for="grokUrl">Grok URL</label>
@@ -328,7 +383,10 @@
                     class="form-control"
                     placeholder="https://grok.com/ (default)"
                   />
-                  <small class="form-hint">e.g., https://grok.com/chat/abc123 for a specific thread</small>
+                  <small class="form-hint"
+                    >e.g., https://grok.com/chat/abc123 for a specific
+                    thread</small
+                  >
                 </div>
                 <div class="form-group">
                   <label for="claudeUrl">Claude URL</label>
@@ -339,7 +397,10 @@
                     class="form-control"
                     placeholder="https://claude.ai/new (default)"
                   />
-                  <small class="form-hint">e.g., https://claude.ai/chat/abc123 for a specific conversation</small>
+                  <small class="form-hint"
+                    >e.g., https://claude.ai/chat/abc123 for a specific
+                    conversation</small
+                  >
                 </div>
               </div>
             </details>
@@ -409,6 +470,24 @@
               </div>
             </div>
 
+            <!-- Google Switch Setting Rows -->
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  id="includeTimestamps"
+                  name="includeTimestamps"
+                  checked
+                />
+                <span class="checkbox-text">
+                  <strong>Include Timestamps</strong>
+                  <small
+                    >Include timestamps (e.g., [0:00]) in transcript output</small
+                  >
+                </span>
+              </label>
+            </div>
+
             <div class="form-group">
               <label class="checkbox-label">
                 <input
@@ -420,7 +499,7 @@
                 <span class="checkbox-text">
                   <strong>Show Summary Button in Video Player</strong>
                   <small
-                    >Display the "Transcript & Summary" button on videos</small
+                    >Display the "Transcript &amp; Summary" button on videos</small
                   >
                 </span>
               </label>
@@ -435,7 +514,7 @@
                   checked
                 />
                 <span class="checkbox-text">
-                  <strong>Auto-fill & Auto-submit</strong>
+                  <strong>Auto-fill &amp; Auto-submit</strong>
                   <small
                     >Automatically paste prompt into AI chat and click send
                     button</small
@@ -445,7 +524,7 @@
             </div>
           </section>
 
-          <!-- Save Button -->
+          <!-- Action Buttons -->
           <div class="form-actions">
             <button type="submit" class="btn btn-primary" id="saveBtn">
               <svg
@@ -472,6 +551,71 @@
               </svg>
               Save Settings
             </button>
+            <button type="button" class="btn btn-secondary" id="exportBtn">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M17 8L12 3L7 8"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M12 3V15"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              Export Settings
+            </button>
+            <button type="button" class="btn btn-secondary" id="importBtn">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M7 10L12 15L17 10"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M12 15V3"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              Import Settings
+            </button>
+            <input type="file" id="importFile" accept=".json" class="hidden" />
             <div class="save-status" id="saveStatus"></div>
           </div>
         </form>

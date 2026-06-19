@@ -6,7 +6,7 @@
  * @returns {boolean} True if transcript is visible in DOM
  */
 function isTranscriptSidebarOpen() {
-  const segments = document.querySelectorAll('ytd-transcript-segment-renderer');
+  const segments = document.querySelectorAll('ytd-transcript-segment-renderer, transcript-segment-view-model');
   return segments.length > 0;
 }
 
@@ -42,7 +42,7 @@ async function getLangOptionsWithLink(videoId) {
  * @returns {Element|null} The visible scroll container
  */
 function getVisibleTranscriptContainer() {
-  const containers = document.querySelectorAll('ytd-transcript-segment-list-renderer');
+  const containers = document.querySelectorAll('ytd-transcript-segment-list-renderer, ytd-macro-markers-list-renderer, yt-section-list-renderer[data-target-id="PAmodern_transcript_view"]');
   
   // Find the one that is actually visible
   for (const container of containers) {
@@ -72,7 +72,7 @@ async function scrollToLoadAllSegments() {
   console.log(`[YouTube Summary] Container: ${scrollEl.offsetWidth}x${scrollEl.offsetHeight}, scrollHeight: ${scrollEl.scrollHeight}`);
   
   // Count only segments WITHIN this container (not from hidden duplicate)
-  const getSegmentCount = () => scrollEl.querySelectorAll('ytd-transcript-segment-renderer').length;
+  const getSegmentCount = () => scrollEl.querySelectorAll('ytd-transcript-segment-renderer, transcript-segment-view-model').length;
   
   const initialCount = getSegmentCount();
   let previousScrollHeight = 0;
@@ -132,8 +132,8 @@ async function getRawTranscriptFromDom() {
   
   // Get segments only from the visible container (not the hidden duplicate)
   const segments = container 
-    ? container.querySelectorAll('ytd-transcript-segment-renderer')
-    : document.querySelectorAll('ytd-transcript-segment-renderer');
+    ? container.querySelectorAll('ytd-transcript-segment-renderer, transcript-segment-view-model')
+    : document.querySelectorAll('ytd-transcript-segment-renderer, transcript-segment-view-model');
   
   console.log(`[YouTube Summary] [EXPERIMENTAL] Found ${segments.length} segments without scrolling`);
   
@@ -149,11 +149,11 @@ async function getRawTranscriptFromDom() {
   
   segments.forEach((segment) => {
     // Extract timestamp - try multiple selectors
-    const timestampEl = segment.querySelector('.segment-timestamp, .segment-start-offset');
+    const timestampEl = segment.querySelector('.segment-timestamp, .segment-start-offset, .ytwTranscriptSegmentViewModelTimestamp');
     const timestamp = timestampEl ? timestampEl.textContent.trim() : '';
     
     // Extract text
-    const textEl = segment.querySelector('.segment-text');
+    const textEl = segment.querySelector('.segment-text, .yt-core-attributed-string, .ytAttributedStringHost');
     const text = textEl ? textEl.textContent.trim() : '';
     
     if (text) {
@@ -236,9 +236,10 @@ async function getRawTranscript(link) {
  * @param {Object} langOption - Language option (unused for DOM scraping)
  * @param {string} videoId - YouTube video ID (unused, kept for compatibility)
  * @param {string} format - Format type: 'plain' or 'markdown'
+ * @param {boolean} includeTimestamps - Whether to include timestamps in output
  * @returns {Promise<string>} Formatted transcript
  */
-async function getFormattedTranscript(langOption, videoId, format = 'plain') {
+async function getFormattedTranscript(langOption, videoId, format = 'plain', includeTimestamps = true) {
   try {
     const items = await getRawTranscriptFromDom();
     
@@ -247,6 +248,9 @@ async function getFormattedTranscript(langOption, videoId, format = 'plain') {
     }
     
     return items.map(item => {
+      if (!includeTimestamps) {
+        return item.text;
+      }
       if (format === 'markdown') {
         return `**[${item.timestamp}]** ${item.text}`;
       }
@@ -262,9 +266,10 @@ async function getFormattedTranscript(langOption, videoId, format = 'plain') {
 /**
  * Direct method to get transcript from DOM (new simplified API)
  * @param {string} format - Format type: 'plain', 'markdown', or 'raw'
+ * @param {boolean} includeTimestamps - Whether to include timestamps in output
  * @returns {string|Array} Transcript in requested format
  */
-async function getTranscriptFromDom(format = 'plain') {
+async function getTranscriptFromDom(format = 'plain', includeTimestamps = true) {
   const items = await getRawTranscriptFromDom();
   
   if (items.length === 0) {
@@ -273,6 +278,10 @@ async function getTranscriptFromDom(format = 'plain') {
   
   if (format === 'raw') {
     return items;
+  }
+  
+  if (!includeTimestamps) {
+    return items.map(item => item.text).join('\n');
   }
   
   if (format === 'markdown') {
@@ -484,9 +493,10 @@ function formatSecondsToTimestamp(seconds) {
 /**
  * Get formatted transcript from Udemy DOM
  * @param {string} format - Format type: 'plain', 'markdown', or 'raw'
+ * @param {boolean} includeTimestamps - Whether to include timestamps in output
  * @returns {Promise<string|Array>} Transcript in requested format
  */
-async function getUdemyTranscriptFromDom(format = 'plain') {
+async function getUdemyTranscriptFromDom(format = 'plain', includeTimestamps = true) {
   const items = await getRawUdemyTranscriptFromDom();
   
   if (items.length === 0) {
@@ -495,6 +505,10 @@ async function getUdemyTranscriptFromDom(format = 'plain') {
   
   if (format === 'raw') {
     return items;
+  }
+  
+  if (!includeTimestamps) {
+    return items.map(item => item.text).join('\n');
   }
   
   if (format === 'markdown') {
@@ -620,9 +634,10 @@ async function getRawCourseraTranscriptFromDom() {
 /**
  * Get formatted transcript from Coursera DOM
  * @param {string} format - Format type: 'plain', 'markdown', or 'raw'
+ * @param {boolean} includeTimestamps - Whether to include timestamps in output
  * @returns {Promise<string|Array>} Transcript in requested format
  */
-async function getCourseraTranscriptFromDom(format = 'plain') {
+async function getCourseraTranscriptFromDom(format = 'plain', includeTimestamps = true) {
   const items = await getRawCourseraTranscriptFromDom();
   
   if (items.length === 0) {
@@ -631,6 +646,10 @@ async function getCourseraTranscriptFromDom(format = 'plain') {
   
   if (format === 'raw') {
     return items;
+  }
+  
+  if (!includeTimestamps) {
+    return items.map(item => item.text).join('\n');
   }
   
   if (format === 'markdown') {
@@ -808,9 +827,10 @@ async function getRawDataCampTranscriptFromDom() {
 /**
  * Get formatted transcript from DataCamp DOM
  * @param {string} format - Format type: 'plain', 'markdown', or 'raw'
+ * @param {boolean} includeTimestamps - Whether to include timestamps in output
  * @returns {Promise<string|Array>} Transcript in requested format
  */
-async function getDataCampTranscriptFromDom(format = 'plain') {
+async function getDataCampTranscriptFromDom(format = 'plain', includeTimestamps = true) {
   const items = await getRawDataCampTranscriptFromDom();
   
   if (items.length === 0) {
@@ -819,6 +839,10 @@ async function getDataCampTranscriptFromDom(format = 'plain') {
   
   if (format === 'raw') {
     return items;
+  }
+  
+  if (!includeTimestamps) {
+    return items.map(item => item.text).join('\n\n');
   }
   
   if (format === 'markdown') {

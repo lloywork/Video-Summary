@@ -131,7 +131,7 @@ class CourseraPlatform extends BasePlatform {
   }
 
   async getTranscript(settings) {
-    return window.TranscriptUtils.getCourseraTranscriptFromDom(settings.copyFormat);
+    return window.TranscriptUtils.getCourseraTranscriptFromDom(settings.copyFormat, settings.includeTimestamps !== false);
   }
 
   /**

@@ -177,7 +177,7 @@ class DataCampPlatform extends BasePlatform {
   }
 
   async getTranscript(settings) {
-    return window.TranscriptUtils.getDataCampTranscriptFromDom(settings.copyFormat);
+    return window.TranscriptUtils.getDataCampTranscriptFromDom(settings.copyFormat, settings.includeTimestamps !== false);
   }
 
   /**

@@ -4,17 +4,25 @@
 /* Main player button */
 #udemy_ai_summary_btn {
   opacity: 0.9;
-  transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+  color: #fff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
 }
 
 #udemy_ai_summary_btn:hover {
   opacity: 1;
   transform: scale(1.1);
   color: #a31ed3; /* Udemy purple accent */
+  background-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 #udemy_ai_summary_btn:focus {
@@ -115,7 +123,17 @@
   filter: drop-shadow(0 0 4px rgba(163, 30, 211, 0.6));
 }
 
-/* Match Udemy's button container spacing */
+/* Match Udemy's button container spacing and layout */
+.udemy-ai-summary-wrapper {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+  height: 100% !important;
+  margin-left: 4px !important;
+  margin-right: 4px !important;
+}
+
 .popper-module--popper--mM5Ie:has(#udemy_ai_summary_btn) {
   margin-left: 4px;
   margin-right: 4px;

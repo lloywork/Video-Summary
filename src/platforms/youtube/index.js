@@ -194,7 +194,8 @@ class YouTubePlatform extends BasePlatform {
     return window.TranscriptUtils.getFormattedTranscript(
       langOptions[0],
       videoId,
-      settings.copyFormat
+      settings.copyFormat,
+      settings.includeTimestamps !== false
     );
   }
 
